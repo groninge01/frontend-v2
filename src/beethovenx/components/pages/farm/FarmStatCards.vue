@@ -1,6 +1,8 @@
 <template>
-  <div class="grid grid-cols-1 sm:grid-cols-1 xl:grid-cols-2 gap-4">
-    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-4">
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 items-stretch gap-4"
+  >
+    <div class="grid grid-cols-1 gap-4">
       <BalCard v-for="(stat, i) in stats" :key="i">
         <div class="text-sm text-gray-500 font-medium mb-2">
           {{ stat.label }}
@@ -11,17 +13,29 @@
         </div>
       </BalCard>
     </div>
-    <FarmHarvestRewardsCard
-      :farm-id="pool.decoratedFarm.id"
-      :token-address="pool.address"
-      :has-beets-rewards="pool.decoratedFarm.rewards > 0"
-      :has-third-party-rewards="pool.decoratedFarm.rewardTokenPerDay > 0"
-      :pending-beets="pool.decoratedFarm.pendingBeets"
-      :pending-beets-value="pool.decoratedFarm.pendingBeetsValue"
-      :pending-reward-token="pool.decoratedFarm.pendingRewardToken"
-      :pending-reward-token-value="pool.decoratedFarm.pendingRewardTokenValue"
-      :reward-token-symbol="pool.decoratedFarm.rewardTokenSymbol"
-    />
+    <div v-if="rewards" class="grid grid-cols-1 gap-4">
+      <BalCard v-for="(reward, i) in rewards" :key="i">
+        <div class="text-sm text-gray-500 font-medium mb-2">
+          {{ reward.label }}
+        </div>
+        <div class="text-xl font-medium truncate flex items-center">
+          {{ reward.value }}
+        </div>
+      </BalCard>
+    </div>
+    <div class="sm:col-span-2 xl:col-span-1">
+      <FarmHarvestRewardsCard
+        :farm-id="pool.decoratedFarm.id"
+        :token-address="pool.address"
+        :has-beets-rewards="pool.decoratedFarm.rewards > 0"
+        :has-third-party-rewards="pool.decoratedFarm.rewardTokenPerDay > 0"
+        :pending-beets="pool.decoratedFarm.pendingBeets"
+        :pending-beets-value="pool.decoratedFarm.pendingBeetsValue"
+        :pending-reward-token="pool.decoratedFarm.pendingRewardToken"
+        :pending-reward-token-value="pool.decoratedFarm.pendingRewardTokenValue"
+        :reward-token-symbol="pool.decoratedFarm.rewardTokenSymbol"
+      />
+    </div>
   </div>
 </template>
 
@@ -87,8 +101,6 @@ export default defineComponent({
     // COMPUTED
     const stats = computed(() => {
       const farm = props.pool.decoratedFarm;
-
-      const rewardToken = props.pool.farm?.rewarder?.tokens[0];
       const items = [
         {
           id: 'tvl',
@@ -96,20 +108,6 @@ export default defineComponent({
           value: fNum(farm.tvl, 'usd')
         }
       ];
-
-      if (farm.rewards === 0 && farm.rewardTokenPerDay > 0) {
-        items.push({
-          id: rewardToken?.symbol || '',
-          label: rewardToken?.symbol || '',
-          value: `${fNum(farm.rewardTokenPerDay, 'token_lg')} / day`
-        });
-      } else {
-        items.push({
-          id: 'beets',
-          label: 'BEETS',
-          value: `${fNum(farm.rewards, 'token_lg')} / day`
-        });
-      }
 
       items.push({
         id: 'stake',
@@ -126,6 +124,30 @@ export default defineComponent({
       return items;
     });
 
+    const rewards = computed(() => {
+      const farm = props.pool.decoratedFarm;
+      const rewardToken = props.pool.farm?.rewarder?.tokens[0];
+      let items: { id: string; label: string; value: string }[] = [];
+
+      if (farm.rewards !== 0) {
+        items.push({
+          id: 'beets',
+          label: 'BEETS',
+          value: `${fNum(farm.rewards, 'token_lg')} / day`
+        });
+      }
+
+      if (farm.rewardTokenPerDay > 0) {
+        items.push({
+          id: rewardToken?.symbol || '',
+          label: rewardToken?.symbol || '',
+          value: `${fNum(farm.rewardTokenPerDay, 'token_lg')} / day`
+        });
+      }
+
+      return items;
+    });
+
     const pendingRewards = computed(() => {
       return {
         count: farmUser.value?.pendingBeets || 0,
@@ -135,6 +157,7 @@ export default defineComponent({
 
     return {
       stats,
+      rewards,
       pendingRewards,
       fNum,
       harvestRewards,

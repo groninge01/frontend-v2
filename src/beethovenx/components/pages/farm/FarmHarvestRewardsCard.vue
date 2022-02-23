@@ -1,5 +1,5 @@
 <template>
-  <BalCard>
+  <BalCard hFull>
     <div class="text-sm text-gray-500 font-medium mb-2">
       My Pending Rewards
     </div>
@@ -19,14 +19,16 @@
       {{ fNum(pendingBeetsValue + pendingRewardTokenValue, 'usd') }}
     </div>
 
-    <BalBtn
-      label="Harvest"
-      block
-      color="gradient"
-      :disabled="pendingBeets <= 0 && pendingRewardToken <= 0"
-      :loading="harvesting"
-      @click.prevent="harvestRewards"
-    />
+    <template v-slot:footer>
+      <BalBtn
+        label="Harvest"
+        block
+        color="gradient"
+        :disabled="pendingBeets <= 0 && pendingRewardToken <= 0"
+        :loading="harvesting"
+        @click.prevent="harvestRewards"
+      />
+    </template>
   </BalCard>
 </template>
 
