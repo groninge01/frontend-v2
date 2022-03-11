@@ -116,7 +116,14 @@ function handleClose(): void {
 </script>
 
 <template>
-  <BalModal show :fireworks="investmentConfirmed" @close="handleClose">
+  <BalModal
+    show
+    :fireworks="investmentConfirmed"
+    @close="handleClose"
+    selfCenterFooter
+    hScreenContent
+    overflowAutoContent
+  >
     <template v-slot:header>
       <div class="flex items-center">
         <BalCircle
@@ -152,12 +159,14 @@ function handleClose(): void {
       <GasEstimationSelector />
     </div>
 
-    <InvestActions
-      :pool="pool"
-      :math="math"
-      :tokenAddresses="tokenAddresses"
-      class="mt-4"
-      @success="investmentConfirmed = true"
-    />
+    <template v-slot:footer>
+      <InvestActions
+        :pool="pool"
+        :math="math"
+        :tokenAddresses="tokenAddresses"
+        class="mt-4"
+        @success="investmentConfirmed = true"
+      />
+    </template>
   </BalModal>
 </template>
