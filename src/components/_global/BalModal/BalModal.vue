@@ -27,6 +27,9 @@
             shadow="lg"
             :no-pad="noPad"
             :no-content-pad="noContentPad"
+            :self-center-footer="selfCenterFooter"
+            :h-screen-content="hScreenContent"
+            :overflow-auto-content="overflowAutoContent"
             class="modal-card"
             noBorder
           >
@@ -62,10 +65,14 @@ export default defineComponent({
     title: { type: String, default: '' },
     noPad: { type: Boolean, default: false },
     noContentPad: { type: Boolean, default: false },
-    fireworks: { type: Boolean, default: false }
+    fireworks: { type: Boolean, default: false },
+    selfCenterFooter: { type: Boolean, default: false },
+    hScreenContent: { type: Boolean, default: false },
+    overflowAutoContent: { type: Boolean, default: false }
   },
 
   setup(props) {
+    console.log('props', props);
     const { show } = toRefs(props);
     const showContent = ref(show.value);
 
