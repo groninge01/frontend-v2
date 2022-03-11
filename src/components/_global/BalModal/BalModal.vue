@@ -72,7 +72,6 @@ export default defineComponent({
   },
 
   setup(props) {
-    console.log('props', props);
     const { show } = toRefs(props);
     const showContent = ref(show.value);
 

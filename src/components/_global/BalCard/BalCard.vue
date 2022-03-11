@@ -56,7 +56,6 @@ export default defineComponent({
   },
 
   setup(props) {
-    console.log('props', props);
     const borderClasses = computed(() => {
       return 'border dark:border-gray-900';
     });
