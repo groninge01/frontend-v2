@@ -28,7 +28,7 @@
             :no-pad="noPad"
             :no-content-pad="noContentPad"
             :self-center-footer="selfCenterFooter"
-            :h-screen-content="hScreenContent"
+            :h-custom-content="hCustomContent"
             :overflow-auto-content="overflowAutoContent"
             class="modal-card"
             noBorder
@@ -72,6 +72,7 @@ export default defineComponent({
   },
 
   setup(props) {
+    console.log(props);
     const { show } = toRefs(props);
     const showContent = ref(show.value);
 

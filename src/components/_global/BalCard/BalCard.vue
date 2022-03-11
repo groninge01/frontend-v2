@@ -44,7 +44,7 @@ export default defineComponent({
     overflowYScroll: { type: Boolean, default: false },
     itemsCenter: { type: Boolean, default: false },
     selfCenterFooter: { type: Boolean, default: false },
-    hScreenContent: { type: Boolean, default: false },
+    hCustomContent: { type: Boolean, default: false },
     overflowAutoContent: { type: Boolean, default: false },
     shadow: {
       type: String,
@@ -56,6 +56,7 @@ export default defineComponent({
   },
 
   setup(props) {
+    console.log(props);
     const borderClasses = computed(() => {
       return 'border dark:border-gray-900';
     });
@@ -95,7 +96,7 @@ export default defineComponent({
       return {
         'p-4': !props.noPad && !props.noContentPad,
         'flex-grow': props.growContent,
-        'h-screen': props.hScreenContent,
+        'h-[75vh]': props.hCustomContent,
         'overflow-auto': props.overflowAutoContent
       };
     });
