@@ -14,6 +14,7 @@ import useInvestState from '../../composables/useInvestState';
 import BalToggle from '@/components/_global/BalToggle/BalToggle.vue';
 import InvestZapActions from '@/components/forms/pool_actions/InvestForm/components/InvestPreviewModal/components/InvestZapActions.vue';
 import GasEstimationSelector from '@/components/gas-estimation/GasEstimationSelector.vue';
+import BalModal from '@/components/_global/BalModal/BalModal.vue';
 
 /**
  * TYPES
@@ -121,7 +122,7 @@ function handleClose(): void {
     :fireworks="investmentConfirmed"
     @close="handleClose"
     selfCenterFooter
-    hScreenContent
+    hCustomContent
     overflowAutoContent
   >
     <template v-slot:header>
