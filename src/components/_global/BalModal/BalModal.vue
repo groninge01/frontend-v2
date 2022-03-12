@@ -67,12 +67,11 @@ export default defineComponent({
     noContentPad: { type: Boolean, default: false },
     fireworks: { type: Boolean, default: false },
     selfCenterFooter: { type: Boolean, default: false },
-    hScreenContent: { type: Boolean, default: false },
+    hCustomContent: { type: Boolean, default: false },
     overflowAutoContent: { type: Boolean, default: false }
   },
 
   setup(props) {
-    console.log(props);
     const { show } = toRefs(props);
     const showContent = ref(show.value);
 
