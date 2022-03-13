@@ -18,7 +18,8 @@ module.exports = {
     '@vue/typescript/recommended',
     '@vue/prettier',
     '@vue/prettier/@typescript-eslint',
-    '@vue/typescript'
+    '@vue/typescript',
+    'plugin:storybook/recommended'
   ],
 
   parserOptions: {
