@@ -13,7 +13,7 @@
       </div>
       <div
         :class="['content', contentClasses]"
-        :style="hCustomContent ? { height: '75vh' } : ''"
+        :style="hCustomContent ? { maxHeight: '60vh' } : ''"
       >
         <slot />
       </div>
