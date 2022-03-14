@@ -121,7 +121,6 @@ function handleClose(): void {
     show
     :fireworks="investmentConfirmed"
     @close="handleClose"
-    selfCenterFooter
     hCustomContent
     overflowAutoContent
   >
