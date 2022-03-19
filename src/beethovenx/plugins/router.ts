@@ -12,6 +12,7 @@ import LgeList from '@/beethovenx/pages/lbp/LgeList.vue';
 import LbpDetail from '@/beethovenx/pages/lbp/LgeDetail.vue';
 import HomePage from '@/beethovenx/pages/Home.vue';
 import InvestPage from '@/beethovenx/pages/Invest.vue';
+import Locker from '@/beethovenx/pages/Locker.vue';
 
 const routes: RouteRecordRaw[] = [
   { path: '/', name: 'home', component: HomePage },
@@ -68,7 +69,7 @@ const routes: RouteRecordRaw[] = [
 if (
   ['development', 'staging'].includes(process.env.VUE_APP_ENV || 'development')
 ) {
-  // routes.push();
+  routes.push({ path: '/locker', name: 'locker', component: Locker });
 }
 
 const router = createRouter({
