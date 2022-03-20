@@ -5,8 +5,9 @@ import { fNum } from '@/composables/useNumbers';
 import { useFreshBeets } from '@/beethovenx/composables/stake/useFreshBeets';
 import { scaleDown } from '@/lib/utils';
 import { BigNumber } from 'bignumber.js';
-import LockerBalances from '@/beethovenx/components/pages/locker/LockerBalances.vue';
+import LockerStatSideCard from '@/beethovenx/components/pages/locker/LockerStatSideCard.vue';
 import LockerStatCards from '@/beethovenx/components/pages/locker/LockerStatCards.vue';
+import LockerCurrentLocks from '@/beethovenx/components/pages/locker/LockerCurrentLocks.vue';
 import BalTabs from '@/components/_global/BalTabs/BalTabs.vue';
 import useFarmUserQuery from '@/beethovenx/composables/farms/useFarmUserQuery';
 import LockerDepositSteps from '@/beethovenx/components/pages/locker/LockerDepositSteps.vue';
@@ -16,6 +17,69 @@ import { getAddress } from '@ethersproject/address';
 import useFarmUser from '@/beethovenx/composables/farms/useFarmUser';
 import usePoolWithFarm from '@/beethovenx/composables/pool/usePoolWithFarm';
 import BalAlert from '@/components/_global/BalAlert/BalAlert.vue';
+
+// BEGIN DATA
+
+const data = {
+  locker: {
+    totalLockedAmount: '50',
+    totalLockedUsd: '49.98442832648373',
+    totalLockedPercentage: '0.005'
+  },
+  lockingUser: {
+    totalLockedAmount: '50',
+    totalLockedAmountUsd: '49.98442832648373',
+    totalUnlockedAmount: '100.0000000000000005',
+    totalUnlockedAmountUsd: '99.9688566529674605',
+    lockingPeriods: [
+      {
+        lockAmount: '0.0000000000000005',
+        lockAmountUsd: '0.0000000000000004998442832648373',
+        epoch: '1647351600'
+      },
+      {
+        lockAmount: '50',
+        lockAmountUsd: '49.98442832648373',
+        epoch: '1647535200'
+      },
+      {
+        lockAmount: '50',
+        lockAmountUsd: '49.98442832648373',
+        epoch: '1647543600'
+      }
+    ],
+    totalClaimedRewardsUsd: '4967.8557900162216298',
+    claimedRewards: [
+      {
+        amount: '4969.4034285714285708',
+        amountUsd: '4967.8557900162216298',
+        token: '0xa9c0fb44a625c5648bb4df173703682d10b1c68a'
+      }
+    ],
+    totalLostThroughKick: '0.0000000000000005',
+    totalLostThroughKickUsd: '0.0000000000000004998442832648373'
+  },
+  lockingRewardTokens: [
+    {
+      rewardRate: '1.146991428571428571',
+      rewardToken: '0xa9c0fb44a625c5648bb4df173703682d10b1c68a',
+      rewardPeriodFinish: '1647536726',
+      totalRewardAmount: '6345.793142857142857141',
+      totalRewardAmountUsd: '6343.8168504766957303',
+      apr: '723925.93412571428544'
+    }
+  ],
+  lockingPendingRewards: [
+    {
+      amount: '1376.3897142857142852',
+      amountUsd: '1375.9610604604740994',
+      token: '0xa9c0FB44a625c5648Bb4DF173703682d10B1C68a'
+    }
+  ],
+  lockingUserVotingPower: '50'
+};
+
+// END DATA
 
 const { appNetworkConfig, isLoadingProfile } = useWeb3();
 const {
@@ -80,7 +144,8 @@ const dataLoading = computed(
 
 const tabs = [
   { value: 'deposit', label: 'Deposit' },
-  { value: 'withdraw', label: 'Withdraw' }
+  { value: 'withdraw', label: 'Withdraw' },
+  { value: 'locks', label: 'Current Locks' }
 ];
 
 const activeTab = ref(tabs[0].value);
@@ -93,15 +158,15 @@ const activeTab = ref(tabs[0].value);
         <BalAlert
           v-if="userBptTokenBalance.gt(0)"
           title="You have unstaked BPT in your wallet"
-          description="If you stake your BPT, you will receive fBEETS and be eligible to earn a portion of Beethoven X Protocol Revenue."
+          description="Use your BPT's to mint fBEETS and be eligible to earn a portion of Beethoven X Protocol Revenue."
           type="warning"
           size="md"
           class="mb-4"
         />
         <BalAlert
           v-if="userBptTokenBalance.eq(0) && userUnstakedFbeetsBalance.gt(0)"
-          title="You have unstaked fBEETS in your wallet"
-          description="If you deposit your fBEETS into the farm, you will earn additional rewards."
+          title="You have unlocked fBEETS in your wallet"
+          description="Lock your fBEETS to earn additional rewards and have voting power."
           type="warning"
           size="md"
           class="mb-4"
@@ -120,6 +185,11 @@ const activeTab = ref(tabs[0].value);
         <div class="mb-4">
           <BalTabs v-model="activeTab" :tabs="tabs" no-pad class="-mb-px" />
         </div>
+        <LockerCurrentLocks
+          v-if="activeTab === 'locks'"
+          :loading="dataLoading"
+          :locks="data.lockingUser.lockingPeriods"
+        />
         <LockerDepositSteps
           v-if="activeTab === 'deposit'"
           :hasBpt="hasBpt"
@@ -136,7 +206,7 @@ const activeTab = ref(tabs[0].value);
         />
       </div>
       <div class="w-full lg:max-w-xl mx-auto md:mx-0 lg:ml-6 md:block lg:w-72">
-        <LockerBalances
+        <LockerStatSideCard
           :loading="dataLoading"
           :f-beets-balance="userFbeetsBalance"
           :bpt-balance="bptBalance"

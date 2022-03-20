@@ -63,7 +63,7 @@
             :loading="depositing || loading"
             block
           >
-            Mint fBEETS
+            Lock fBEETS
           </BalBtn>
         </template>
       </template>

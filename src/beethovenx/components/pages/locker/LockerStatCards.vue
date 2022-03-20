@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import BalCard from '@/components/_global/BalCard/BalCard.vue';
-import FarmHarvestRewardsCard from '@/beethovenx/components/pages/farm/FarmHarvestRewardsCard.vue';
+import LockerClaimRewardsCard from '@/beethovenx/components/pages/locker/LockerClaimRewardsCard.vue';
 import useWeb3 from '@/services/web3/useWeb3';
 import { useFreshBeets } from '@/beethovenx/composables/stake/useFreshBeets';
 import useNumbers from '@/composables/useNumbers';
@@ -90,7 +90,7 @@ const {
 <template>
   <div class="grid grid-cols-2 grid-rows-2 sm:grid-flow-col gap-4 mb-6">
     <template v-if="fBeetsLoading">
-      <BalLoadingBlock v-for="n in 4" :key="n" class="h-24" />
+      <BalLoadingBlock v-for="n in 3" :key="n" class="h-24" />
     </template>
     <template v-else>
       <BalCard>
@@ -101,17 +101,23 @@ const {
           {{ fNum(data.lockingUserVotingPower || '0', 'token_fixed') }}
           fBEETS
         </div>
+        <div class="truncate">
+          ({{ fNum('0.002', 'percent') }} of total locked fBEETS)
+        </div>
       </BalCard>
       <BalCard>
         <div class="text-sm text-gray-500 font-medium mb-2">
           My Locked Tokens
         </div>
-        <div class="text-xl font-medium truncate flex items-center">
-          {{ fNum('48', 'token_fixed') }}
-          fBEETS
+        <div>
+          <div class="text-xl font-medium truncate flex items-center">
+            {{ fNum('48', 'token_fixed') }}
+            fBEETS
+          </div>
+          <div class="truncate">({{ fNum('51', 'usd') }})</div>
         </div>
       </BalCard>
-      <FarmHarvestRewardsCard
+      <LockerClaimRewardsCard
         class="col-span-2 sm:row-span-2"
         :has-beets-rewards="true"
         :farm-id="appNetworkConfig.fBeets.farmId"
