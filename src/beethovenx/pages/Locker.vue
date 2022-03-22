@@ -122,11 +122,6 @@ const beetsBalance = computed(() =>
   fNum(balanceFor(getAddress(appNetworkConfig.addresses.beets)), 'token')
 );
 
-const oldFarmUserQuery = useFarmUserQuery(appNetworkConfig.fBeets.oldFarmId);
-const oldFarmUser = computed(() => {
-  return oldFarmUserQuery.data.value;
-});
-
 onMounted(() => {
   injectTokens([
     appNetworkConfig.fBeets.poolAddress,

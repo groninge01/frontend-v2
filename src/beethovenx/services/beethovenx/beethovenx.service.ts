@@ -13,6 +13,7 @@ import {
   GqlLgeCreateInput,
   GqlSorGetSwapsInput,
   GqlSorGetSwapsResponse,
+  GqlLocker,
   GqlTokenPrice,
   GqlUserPortfolioData,
   GqlUserTokenData,
@@ -591,6 +592,26 @@ export default class BeethovenxService {
         sorGetSwaps.returnAmountConsideringFees
       )
     };
+  }
+
+  public async getLockerData(): Promise<GqlLocker> {
+    const query = jsonToGraphQLQuery({
+      query: {
+        locker: {
+          totalLockedAmount: true,
+          totalLockedUsd: true,
+          totalLockedPercentage: true,
+          timestamp: true,
+          block: true
+        }
+      }
+    });
+
+    const { locker } = await this.get<{
+      locker: GqlLocker;
+    }>(query);
+
+    return locker;
   }
 
   private get userProfileDataFragment() {

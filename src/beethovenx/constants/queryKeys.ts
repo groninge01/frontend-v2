@@ -121,6 +121,9 @@ const QUERY_KEYS = {
   },
   FBeets: {
     all: ['FBeets', 'all']
+  },
+  Locker: {
+    all: ['Locker', 'all']
   }
 };
 
