@@ -13,6 +13,7 @@ import LbpDetail from '@/beethovenx/pages/lbp/LgeDetail.vue';
 import HomePage from '@/beethovenx/pages/Home.vue';
 import InvestPage from '@/beethovenx/pages/Invest.vue';
 import Locker from '@/beethovenx/pages/Locker.vue';
+import LinearPools from '@/beethovenx/pages/LinearPools.vue';
 
 const routes: RouteRecordRaw[] = [
   { path: '/', name: 'home', component: HomePage },
@@ -56,6 +57,7 @@ const routes: RouteRecordRaw[] = [
   { path: '/lge-create', name: 'lge-create', component: LbpCreate },
   { path: '/launch', name: 'launch', component: LgeList },
   { path: '/lge/:id', name: 'lge', component: LbpDetail },
+  { path: '/linear-pools', name: 'linear-pools', component: LinearPools },
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',

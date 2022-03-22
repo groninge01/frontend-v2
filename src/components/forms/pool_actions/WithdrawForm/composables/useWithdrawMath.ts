@@ -68,6 +68,7 @@ export type WithdrawMathResponse = {
   shouldUseBatchRelayer: Ref<boolean>;
   batchRelayerSwap: Ref<any | null>;
   exitPoolAndBatchSwap: Ref<any | null>;
+  exitPoolBatchSwapWrappedTokensOut: Ref<{ token: string; amount: string }[]>;
   loadingAmountsOut: Ref<boolean>;
   initMath: () => Promise<void>;
   resetMath: () => void;
@@ -89,6 +90,9 @@ export default function useWithdrawMath(
   const exitPoolAndBatchSwapAmountsOut = ref<string[]>([]);
   const exitPoolAndBatchSwapSingleAssetMaxes = ref<string[]>([]);
   const exitPoolAndBatchSwap = ref<TransactionData | null>(null);
+  const exitPoolBatchSwapWrappedTokensOut = ref<
+    { token: string; amount: string }[]
+  >([]);
 
   const batchSwap = ref<BatchSwapOut | null>(null);
   const batchSwapUsd = ref<BatchSwapOut | null>(null);
@@ -215,11 +219,28 @@ export default function useWithdrawMath(
 
         return linearPool?.mainTokenTotalBalance || '0';
       }
+    } else if (
+      isWeightedPoolWithNestedLinearPools.value &&
+      pool.value.mainTokens &&
+      pool.value.mainTokens[tokenOutIndex.value]
+    ) {
+      const tokenAddress = getAddress(
+        pool.value.mainTokens[tokenOutIndex.value]
+      );
+
+      const linearPool = pool.value.linearPools?.find(
+        linearPool =>
+          linearPool.mainToken.address.toLowerCase() ===
+          tokenAddress.toLowerCase()
+      );
+
+      return linearPool?.mainTokenTotalBalance || '0';
     }
 
     const balances = Object.values(pool.value.onchain.tokens).map(
       token => token.balance
     );
+
     return balances[tokenOutIndex.value];
   });
 
@@ -296,16 +317,31 @@ export default function useWithdrawMath(
 
   const fullAmounts = computed(() => {
     if (isProportional.value) return proportionalAmounts.value;
+
+    if (isWeightedPoolWithNestedLinearPools.value) {
+      return withdrawalTokens.value.map((withdrawToken, i) => {
+        return withdrawToken.address.toLowerCase() ===
+          tokenOut.value.toLowerCase()
+          ? tokenOutAmount.value || '0'
+          : '0';
+      });
+    }
+
     return new Array(tokenCount.value).fill('0').map((_, i) => {
       return i === tokenOutIndex.value ? tokenOutAmount.value || '0' : '0';
     });
   });
 
-  const fullAmountsScaled = computed((): string[] =>
-    fullAmounts.value.map((amount, i) =>
-      parseUnits(amount, withdrawalTokens.value[i].decimals).toString()
-    )
-  );
+  const fullAmountsScaled = computed((): string[] => {
+    return fullAmounts.value.map((amount, i) => {
+      const indexOfDecimal = amount.indexOf('.');
+
+      return parseUnits(
+        amount.slice(0, indexOfDecimal + withdrawalTokens.value[i].decimals),
+        withdrawalTokens.value[i].decimals
+      ).toString();
+    });
+  });
 
   const fullAmountsWithNestedUsdBpt = computed(() => {
     if (!hasNestedUsdStablePhantomPool.value || batchSwapUsd.value === null) {
@@ -367,6 +403,21 @@ export default function useWithdrawMath(
         return batchRelayerSwap.value?.outputs?.amountsIn || '0';
       }
       return batchSwap.value?.returnAmounts?.[0]?.toString() || '0';
+    } else if (
+      isWeightedPoolWithNestedLinearPools.value &&
+      hasNestedUsdStablePhantomPool.value
+    ) {
+      const withdrawTokenIndex = withdrawalTokens.value.findIndex(
+        withdrawToken =>
+          withdrawToken.address.toLowerCase() === tokenOut.value.toLowerCase()
+      );
+
+      return (
+        poolCalculator
+          //TODO: this is wrong, mixing main token and phantom BPT
+          .bptInForExactTokenOut(tokenOutAmount.value, withdrawTokenIndex)
+          .toString()
+      );
     }
 
     return poolCalculator
@@ -463,11 +514,11 @@ export default function useWithdrawMath(
     bnum(priceImpact.value).isGreaterThanOrEqualTo(0.01)
   );
 
-  const fiatAmounts = computed((): string[] =>
-    fullAmounts.value.map((amount, i) =>
+  const fiatAmounts = computed((): string[] => {
+    return fullAmounts.value.map((amount, i) =>
       toFiat(amount, withdrawalTokens.value[i].address)
-    )
-  );
+    );
+  });
 
   const fiatTotal = computed((): string =>
     fiatAmounts.value.reduce(
@@ -724,12 +775,12 @@ export default function useWithdrawMath(
         formatUnits(expectedAmountsOut[idx] || '0', 18)
       );
 
-      /*if (
+      if (
         linearPool &&
         parseFloat(linearPool.mainToken.balance) < expectedAmountOut
       ) {
         return linearPool.wrappedToken.address;
-      }*/
+      }
 
       return token;
     });
@@ -742,25 +793,43 @@ export default function useWithdrawMath(
     }
 
     const usdTokens = configService.network.usdTokens;
+    const usdTokenToWrappedTokenMap =
+      configService.network.usdTokenToWrappedTokenMap;
+    const wrappedUsdTokens = Object.values(usdTokenToWrappedTokenMap);
 
     return batchSwapTokens
       .filter((batchSwapToken, idx) => {
-        if (usdTokens.includes(batchSwapToken)) {
+        if (
+          usdTokens.includes(batchSwapToken) ||
+          wrappedUsdTokens.includes(batchSwapToken)
+        ) {
           if (isProportional.value) {
             return (
-              batchSwapToken.toLowerCase() === usdAsset.value.toLowerCase()
+              batchSwapToken.toLowerCase() === usdAsset.value.toLowerCase() ||
+              usdTokenToWrappedTokenMap[
+                getAddress(usdAsset.value)
+              ]?.toLowerCase() === batchSwapToken.toLowerCase()
             );
-          } else if (!usdTokens.includes(tokenOut.value)) {
+          } else if (
+            !usdTokens.includes(tokenOut.value) &&
+            !wrappedUsdTokens.includes(tokenOut.value)
+          ) {
             return (
               batchSwapTokens
                 .slice(0, idx)
-                .filter(token =>
-                  configService.network.usdTokens.includes(token)
+                .filter(
+                  token =>
+                    usdTokens.includes(token) ||
+                    wrappedUsdTokens.includes(token)
                 ).length === 0
             );
           }
 
-          return tokenOut.value.toLowerCase() === batchSwapToken.toLowerCase();
+          return (
+            tokenOut.value.toLowerCase() === batchSwapToken.toLowerCase() ||
+            usdTokenToWrappedTokenMap[tokenOut.value]?.toLowerCase() ===
+              batchSwapToken.toLowerCase()
+          );
         }
 
         return true;
@@ -774,12 +843,12 @@ export default function useWithdrawMath(
             formatUnits(expectedAmountsOut[idx] || '0', 18)
           );
 
-          /*if (
+          if (
             linearPool &&
             parseFloat(linearPool.mainToken.balance) < expectedAmountOut
           ) {
             return linearPool.wrappedToken.address;
-          }*/
+          }
         }
 
         return batchSwapToken;
@@ -788,7 +857,7 @@ export default function useWithdrawMath(
 
   async function getBatchRelayerExitPoolAndBatchSwap() {
     exitBatchSwapLoading.value = true;
-    let expectedAmountsOut: string[];
+    let expectedAmountsOut: string[] = fullAmountsScaled.value;
 
     //determine expectedAmountsOut based on tokensOut
     if (isProportional.value) {
@@ -822,8 +891,14 @@ export default function useWithdrawMath(
     }
 
     const tokensOut = getExitPoolBatchSwapTokensOut(expectedAmountsOut);
-
-    console.log('tokens out', tokensOut);
+    exitPoolBatchSwapWrappedTokensOut.value = tokensOut
+      .map((token, idx) => ({ token, amount: expectedAmountsOut[idx] }))
+      .filter(
+        item =>
+          !!(pool.value.linearPools || []).find(
+            linearPool => linearPool.wrappedToken.address === item.token
+          )
+      );
 
     try {
       const response = await balancer.relayer.exitPoolAndBatchSwap({
@@ -976,6 +1051,12 @@ export default function useWithdrawMath(
     }
   });
 
+  watch(usdAsset, () => {
+    if (isWeightedPoolWithNestedLinearPools.value) {
+      getBatchRelayerExitPoolAndBatchSwap().catch();
+    }
+  });
+
   watch(isWalletReady, async () => {
     await forChange(dynamicDataLoading, false);
     initMath();
@@ -1030,6 +1111,7 @@ export default function useWithdrawMath(
     batchRelayerSwap,
     loadingAmountsOut,
     exitPoolAndBatchSwap,
+    exitPoolBatchSwapWrappedTokensOut,
     // methods
     initMath,
     resetMath,

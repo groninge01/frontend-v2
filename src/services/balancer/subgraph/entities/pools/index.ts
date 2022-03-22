@@ -11,11 +11,14 @@ import { configService as _configService } from '@/services/config/config.servic
 import PoolService from '@/services/pool/pool.service';
 import axios from 'axios';
 import { jsonToGraphQLQuery } from 'json-to-graphql-query';
+import { cloneDeep } from 'lodash';
 
 export default class Pools {
   service: Service;
   query: QueryBuilder;
   networkId: Network;
+  pools: Pool[] = [];
+  lastPoolsFetch: number | null = null;
 
   constructor(
     service: Service,
@@ -29,6 +32,16 @@ export default class Pools {
   }
 
   public async get(): Promise<Pool[]> {
+    const timestamp = Math.floor(Date.now() / 1000);
+
+    if (
+      this.pools.length > 0 &&
+      this.lastPoolsFetch &&
+      timestamp < this.lastPoolsFetch + 15
+    ) {
+      return cloneDeep(this.pools);
+    }
+
     const query = this.query();
 
     try {
@@ -38,6 +51,9 @@ export default class Pools {
         query: jsonToGraphQLQuery({ query })
       });
 
+      this.pools = cloneDeep(data.pools);
+
+      this.lastPoolsFetch = timestamp;
       return data.pools;
     } catch (error) {
       console.error(error);
