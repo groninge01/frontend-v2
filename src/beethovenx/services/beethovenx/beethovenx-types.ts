@@ -423,3 +423,42 @@ export interface GqlLocker {
   timestamp: Scalars['BigInt'];
   block: Scalars['BigInt'];
 }
+
+export interface GqlLockingReward {
+  amount: Scalars['BigDecimal'];
+  amountUsd: Scalars['BigDecimal'];
+  token: Scalars['Bytes'];
+}
+
+export interface GqlLockingPeriod {
+  epoch: Scalars['BigInt'];
+  lockAmount: Scalars['BigDecimal'];
+  lockAmountUsd: Scalars['BigDecimal'];
+}
+export interface GqlLockingUser {
+  __typename?: 'GqlLockingUser';
+  id: Scalars['ID'];
+  address: Scalars['Bytes'];
+  claimedRewards: Array<GqlLockingReward>;
+  collectedKickRewardAmount: Scalars['BigDecimal'];
+  collectedKickRewardAmountUsd: Scalars['BigDecimal'];
+  lockingPeriods: Array<GqlLockingPeriod>;
+  totalClaimedRewardsUsd: Scalars['BigDecimal'];
+  totalLockedAmount: Scalars['BigDecimal'];
+  totalLockedAmountUsd: Scalars['BigDecimal'];
+  totalUnlockedAmount: Scalars['BigDecimal'];
+  totalUnlockedAmountUsd: Scalars['BigDecimal'];
+  totalLostThroughKick: Scalars['BigDecimal'];
+  totalLostThroughKickUsd: Scalars['BigDecimal'];
+  timestamp: Scalars['BigInt'];
+  block: Scalars['BigInt'];
+}
+
+export interface GqlRewardToken {
+  rewardPeriodFinish: Scalars['BigInt'];
+  rewardRate: Scalars['BigDecimal'];
+  rewardToken: Scalars['Bytes'];
+  totalRewardAmount: Scalars['BigDecimal'];
+  totalRewardAmountUsd: Scalars['BigDecimal'];
+  apr: Scalars['BigDecimal'];
+}

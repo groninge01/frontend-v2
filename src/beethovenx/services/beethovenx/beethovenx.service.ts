@@ -19,7 +19,9 @@ import {
   GqlUserTokenData,
   UserPortfolio,
   UserPortfolioData,
-  UserTokenData
+  UserTokenData,
+  GqlLockingUser,
+  GqlRewardToken
 } from './beethovenx-types';
 import { getAddress, isAddress } from '@ethersproject/address';
 import { keyBy } from 'lodash';
@@ -594,7 +596,12 @@ export default class BeethovenxService {
     };
   }
 
-  public async getLockerData(): Promise<GqlLocker> {
+  public async getLockerData(): Promise<{
+    locker: GqlLocker;
+    lockingUser: GqlLockingUser;
+    lockingRewardTokens: GqlRewardToken;
+    lockingUserVotingPower: number;
+  }> {
     const query = jsonToGraphQLQuery({
       query: {
         locker: {
@@ -603,15 +610,46 @@ export default class BeethovenxService {
           totalLockedPercentage: true,
           timestamp: true,
           block: true
-        }
+        },
+        lockingUser: {
+          totalLockedAmount: true,
+          totalLockedAmountUsd: true,
+          totalUnlockedAmount: true,
+          totalUnlockedAmountUsd: true,
+          lockingPeriods: {
+            lockAmount: true,
+            lockAmountUsd: true,
+            epoch: true
+          },
+          totalClaimedRewardsUsd: true,
+          claimedRewards: {
+            amount: true,
+            amountUsd: true,
+            token: true
+          },
+          totalLostThroughKick: true,
+          totalLostThroughKickUsd: true
+        },
+        lockingRewardTokens: {
+          rewardRate: true,
+          rewardToken: true,
+          rewardPeriodFinish: true,
+          totalRewardAmount: true,
+          totalRewardAmountUsd: true,
+          apr: true
+        },
+        lockingUserVotingPower: true
       }
     });
 
-    const { locker } = await this.get<{
+    const data = await this.get<{
       locker: GqlLocker;
-    }>(query);
+      lockingUser: GqlLockingUser;
+      lockingRewardTokens: GqlRewardToken;
+      lockingUserVotingPower: number;
+    }>(query, '0x4fbe899d37fb7514adf2f41b0630e018ec275a0c');
 
-    return locker;
+    return data;
   }
 
   private get userProfileDataFragment() {

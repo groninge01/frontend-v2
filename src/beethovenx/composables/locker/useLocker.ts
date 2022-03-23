@@ -19,15 +19,17 @@ export function useLocker() {
 
   const lockerDataLoading = computed(() => isLoading.value);
 
-  const totalLockedAmount = computed(() => data.value?.totalLockedAmount);
+  const totalLockedAmount = computed(
+    () => data.value?.locker.totalLockedAmount
+  );
   const totalLockedUsd = computed(() => {
-    return data.value?.totalLockedUsd ?? bn(0);
+    return data.value?.locker.totalLockedUsd ?? bn(0);
   });
   const totalLockedPercentage = computed(() => {
-    return data.value?.totalLockedPercentage ?? bn(0);
+    return data.value?.locker.totalLockedPercentage ?? bn(0);
   });
-  const timestamp = computed(() => data.value?.timestamp ?? bn(0));
-  const block = computed(() => data.value?.block ?? bn(0));
+  const timestamp = computed(() => data.value?.locker.timestamp ?? bn(0));
+  const block = computed(() => data.value?.locker.block ?? bn(0));
 
   // async function approve(amount?: string) {
   //   const tx = await erc20ContractService.erc20.approveToken(

@@ -4,13 +4,18 @@ import QUERY_KEYS from '@/beethovenx/constants/queryKeys';
 import useApp from '@/composables/useApp';
 import useWeb3 from '@/services/web3/useWeb3';
 import { beethovenxService } from '@/beethovenx/services/beethovenx/beethovenx.service';
+import {
+  GqlLocker,
+  GqlLockingReward,
+  GqlLockingUser,
+  GqlRewardToken
+} from '@/beethovenx/services/beethovenx/beethovenx-types';
 
 interface QueryResponse {
-  totalLockedPercentage: string;
-  totalLockedAmount: string;
-  totalLockedUsd: string;
-  timestamp: string;
-  block: string;
+  locker: GqlLocker;
+  lockingUser: GqlLockingUser;
+  lockingRewardTokens: GqlRewardToken;
+  lockingUserVotingPower: number;
 }
 
 export default function useLockerQuery() {
@@ -19,10 +24,7 @@ export default function useLockerQuery() {
 
   const queryFn = async () => {
     const data = await beethovenxService.getLockerData();
-    console.log('lockerData', data);
-    return {
-      ...data
-    };
+    return data;
   };
 
   const queryOptions = reactive({
