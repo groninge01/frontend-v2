@@ -6,7 +6,6 @@ import useWeb3 from '@/services/web3/useWeb3';
 import { beethovenxService } from '@/beethovenx/services/beethovenx/beethovenx.service';
 import {
   GqlLocker,
-  GqlLockingReward,
   GqlLockingUser,
   GqlRewardToken
 } from '@/beethovenx/services/beethovenx/beethovenx-types';
