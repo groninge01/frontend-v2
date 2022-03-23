@@ -462,3 +462,9 @@ export interface GqlRewardToken {
   totalRewardAmountUsd: Scalars['BigDecimal'];
   apr: Scalars['BigDecimal'];
 }
+
+export interface GqlLockingReward {
+  amount: Scalars['BigDecimal'];
+  amountUsd: Scalars['BigDecimal'];
+  token: Scalars['Bytes'];
+}

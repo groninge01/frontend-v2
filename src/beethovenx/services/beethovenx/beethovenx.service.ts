@@ -17,11 +17,12 @@ import {
   GqlTokenPrice,
   GqlUserPortfolioData,
   GqlUserTokenData,
+  GqlLockingUser,
+  GqlRewardToken,
+  GqlLockingReward,
   UserPortfolio,
   UserPortfolioData,
-  UserTokenData,
-  GqlLockingUser,
-  GqlRewardToken
+  UserTokenData
 } from './beethovenx-types';
 import { getAddress, isAddress } from '@ethersproject/address';
 import { keyBy } from 'lodash';
@@ -649,6 +650,24 @@ export default class BeethovenxService {
       lockingUserVotingPower: number;
     }>(query, '0x4fbe899d37fb7514adf2f41b0630e018ec275a0c');
 
+    return data;
+  }
+
+  public async getLockerRewardsData(): Promise<GqlLockingReward[]> {
+    const query = jsonToGraphQLQuery({
+      query: {
+        lockingPendingRewards: {
+          amount: true,
+          amountUsd: true,
+          token: true
+        }
+      }
+    });
+
+    const data = await this.get<GqlLockingReward[]>(
+      query,
+      '0x4fbe899d37fb7514adf2f41b0630e018ec275a0c'
+    );
     return data;
   }
 
