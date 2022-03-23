@@ -22,12 +22,12 @@ export function useLocker() {
   const totalLockedAmount = computed(
     () => data.value?.locker.totalLockedAmount
   );
-  const totalLockedUsd = computed(() => {
-    return data.value?.locker.totalLockedUsd ?? bn(0);
-  });
-  const totalLockedPercentage = computed(() => {
-    return data.value?.locker.totalLockedPercentage ?? bn(0);
-  });
+  const totalLockedUsd = computed(
+    () => data.value?.locker.totalLockedUsd ?? bn(0)
+  );
+  const totalLockedPercentage = computed(
+    () => data.value?.locker.totalLockedPercentage ?? bn(0)
+  );
   const timestamp = computed(() => data.value?.locker.timestamp ?? bn(0));
   const block = computed(() => data.value?.locker.block ?? bn(0));
 
