@@ -140,7 +140,7 @@ const dataLoading = computed(
 const tabs = [
   { value: 'deposit', label: 'Deposit' },
   { value: 'withdraw', label: 'Withdraw' },
-  { value: 'locks', label: 'Current Locks' }
+  { value: 'locks', label: 'My Locks' }
 ];
 
 const activeTab = ref(tabs[0].value);
