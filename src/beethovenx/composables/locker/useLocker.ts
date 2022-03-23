@@ -99,8 +99,7 @@ export function useLocker() {
     totalLockedUsd,
     totalLockedPercentage,
     timestamp,
-    block,
-    lockerQuery
+    block
 
     // approve,
     // stake,
