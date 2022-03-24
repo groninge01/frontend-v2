@@ -45,6 +45,7 @@ function handleFarmDeposit(txReceipt): void {
     </template>
   </StepContainer>
   <StepContainer
+    v-if="props.hasBpt"
     :step-number="2"
     title="Use your Fidelio Duetto BPTs to mint fBEETS"
     :complete="props.hasUnstakedFbeets || props.hasStakedFbeets"
@@ -54,7 +55,7 @@ function handleFarmDeposit(txReceipt): void {
     </template>
   </StepContainer>
   <StepContainer
-    :step-number="3"
+    :step-number="props.hasBpt ? 3 : 2"
     title="Lock your fBEETS in the fBEETS locker"
     :complete="props.hasStakedFbeets"
   >

@@ -599,7 +599,7 @@ export default class BeethovenxService {
 
   public async getLockerData(): Promise<{
     locker: GqlLocker;
-    lockingRewardTokens: GqlRewardToken;
+    lockingRewardTokens: GqlRewardToken[];
   }> {
     const query = jsonToGraphQLQuery({
       query: {
@@ -623,7 +623,7 @@ export default class BeethovenxService {
 
     const data = await this.get<{
       locker: GqlLocker;
-      lockingRewardTokens: GqlRewardToken;
+      lockingRewardTokens: GqlRewardToken[];
     }>(query);
 
     return data;

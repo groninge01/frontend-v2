@@ -21,7 +21,8 @@ const {
   lockerDataLoading,
   totalLockedAmount,
   totalLockedUsd,
-  totalLockedPercentage
+  totalLockedPercentage,
+  totalApr
 } = useLocker();
 
 /**
@@ -36,10 +37,10 @@ const {
   <template v-else>
     <BalCard class="mb-4">
       <div class="text-sm text-gray-500 font-medium mb-2">
-        APR
+        Total APR
       </div>
       <div class="text-xl font-medium truncate flex items-center">
-        {{ fNum('0.70', 'percent') }}
+        {{ fNum(totalApr, 'percent') }}
         <LockerAprTooltip
           :swap-apr="0.026"
           :farm-apr="0.045"

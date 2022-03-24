@@ -17,10 +17,13 @@
         append-shadow
       >
         <template v-slot:info>
-          <div class="cursor-pointer flex" @click.prevent="amount = bptBalance">
+          <div
+            class="cursor-pointer flex"
+            @click.prevent="amount = fbeetsBalance"
+          >
             {{ $t('balance') }}:
             <BalLoadingBlock v-if="loading" class="h-4 w-24 ml-1" white />
-            <span v-else>&nbsp;{{ bptBalance }}</span>
+            <span v-else>&nbsp;{{ fbeetsBalance }}</span>
           </div>
         </template>
         <template v-slot:append>
@@ -28,7 +31,7 @@
             <BalBtn
               size="xs"
               color="white"
-              @click.prevent="amount = bptBalance"
+              @click.prevent="amount = fbeetsBalance"
             >
               {{ $t('max') }}
             </BalBtn>
@@ -47,7 +50,7 @@
       <template v-else>
         <BalBtn
           v-if="approvalRequired"
-          label="Approve BPT"
+          label="Approve fBeets"
           :loading="approving || loading"
           :loading-label="loading ? 'Loading' : $t('approving')"
           :disabled="!validInput || parseFloat(amount) === 0 || amount === ''"
@@ -94,6 +97,7 @@ import useWeb3 from '@/services/web3/useWeb3';
 import useEthers from '@/composables/useEthers';
 import BigNumber from 'bignumber.js';
 import { useFreshBeets } from '@/beethovenx/composables/stake/useFreshBeets';
+import { useLocker } from '@/beethovenx/composables/locker/useLocker';
 import useAllowanceAvailableQuery from '@/beethovenx/composables/farms/useAllowanceAvailableQuery';
 import { governanceContractsService } from '@/beethovenx/services/governance/governance-contracts.service';
 import useTokens from '@/composables/useTokens';
@@ -138,14 +142,9 @@ export default defineComponent({
     } = useWeb3();
     const { fNum } = useNumbers();
     const { t } = useI18n();
-    const {
-      userBptTokenBalance,
-      approve,
-      stake,
-      freshBeetsQuery,
-      userAllowance,
-      refetch
-    } = useFreshBeets();
+    const { userUnstakedFbeetsBalance, freshBeetsQuery } = useFreshBeets();
+    const { userAllowance, refetch, approve, lock } = useLocker();
+
     const { farmUserRefetch } = useFarmUser(appNetworkConfig.fBeets.farmId);
     const { refetchAllowances } = useTokens();
 
@@ -153,7 +152,9 @@ export default defineComponent({
     const depositing = ref(false);
     const approving = ref(false);
 
-    const bptBalance = computed(() => userBptTokenBalance.value.toString());
+    const fbeetsBalance = computed(() =>
+      userUnstakedFbeetsBalance.value.toString()
+    );
 
     const { txListener } = useEthers();
 
@@ -161,7 +162,7 @@ export default defineComponent({
       return isWalletReady.value
         ? [
             isPositive(),
-            isLessThanOrEqualTo(bptBalance.value, t('exceedsBalance'))
+            isLessThanOrEqualTo(fbeetsBalance.value, t('exceedsBalance'))
           ]
         : [isPositive()];
     }
@@ -212,7 +213,7 @@ export default defineComponent({
       const amountScaled = scale(new BigNumber(amount.value), 18);
 
       try {
-        const tx = await stake(amountScaled.toString());
+        const tx = await lock(amountScaled.toString());
 
         if (!tx) {
           depositing.value = false;
@@ -267,7 +268,7 @@ export default defineComponent({
       // methods
       submit,
       fNum,
-      bptBalance
+      fbeetsBalance
     };
   }
 });

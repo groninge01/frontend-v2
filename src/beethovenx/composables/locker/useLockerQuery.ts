@@ -8,23 +8,37 @@ import {
   GqlLocker,
   GqlRewardToken
 } from '@/beethovenx/services/beethovenx/beethovenx-types';
+import { lockerContractsService } from '@/beethovenx/services/locker/locker-contracts.service';
+import BigNumber from 'bignumber.js';
 
 interface QueryResponse {
-  locker: GqlLocker;
-  lockingRewardTokens: GqlRewardToken;
+  gqlData: { locker: GqlLocker; lockingRewardTokens: GqlRewardToken[] };
+  contractData: {
+    allowance: BigNumber;
+  };
 }
 
 export default function useLockerQuery() {
   const { appLoading } = useApp();
+  const { isWalletReady, account } = useWeb3();
   const queryKey = reactive(QUERY_KEYS.Locker.all);
+  const enabled = computed(() => !appLoading.value && isWalletReady.value);
 
   const queryFn = async () => {
-    const data = await beethovenxService.getLockerData();
-    return data;
+    const contractData = await lockerContractsService.locker.getData(
+      account.value
+    );
+    const gqlData = await beethovenxService.getLockerData();
+    return {
+      gqlData,
+      contractData: {
+        allowance: new BigNumber(contractData.allowance.toString())
+      }
+    };
   };
 
   const queryOptions = reactive({
-    enabled: true
+    enabled
   });
 
   return useQuery<QueryResponse>(queryKey, queryFn, queryOptions);
