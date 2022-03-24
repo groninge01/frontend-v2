@@ -4,14 +4,11 @@ import QUERY_KEYS from '@/beethovenx/constants/queryKeys';
 import useApp from '@/composables/useApp';
 import useWeb3 from '@/services/web3/useWeb3';
 import { beethovenxService } from '@/beethovenx/services/beethovenx/beethovenx.service';
-import {
-  GqlLocker,
-  GqlRewardToken
-} from '@/beethovenx/services/beethovenx/beethovenx-types';
+import { GqlLockingUser } from '@/beethovenx/services/beethovenx/beethovenx-types';
 
 interface QueryResponse {
-  locker: GqlLocker;
-  lockingRewardTokens: GqlRewardToken;
+  lockingUser: GqlLockingUser;
+  lockingUserVotingPower: number;
 }
 
 export default function useLockerQuery() {
@@ -19,7 +16,7 @@ export default function useLockerQuery() {
   const queryKey = reactive(QUERY_KEYS.Locker.all);
 
   const queryFn = async () => {
-    const data = await beethovenxService.getLockerData();
+    const data = await beethovenxService.getLockerUserData();
     return data;
   };
 

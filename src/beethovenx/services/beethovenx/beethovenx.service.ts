@@ -599,9 +599,7 @@ export default class BeethovenxService {
 
   public async getLockerData(): Promise<{
     locker: GqlLocker;
-    lockingUser: GqlLockingUser;
     lockingRewardTokens: GqlRewardToken;
-    lockingUserVotingPower: number;
   }> {
     const query = jsonToGraphQLQuery({
       query: {
@@ -612,6 +610,31 @@ export default class BeethovenxService {
           timestamp: true,
           block: true
         },
+        lockingRewardTokens: {
+          rewardRate: true,
+          rewardToken: true,
+          rewardPeriodFinish: true,
+          totalRewardAmount: true,
+          totalRewardAmountUsd: true,
+          apr: true
+        }
+      }
+    });
+
+    const data = await this.get<{
+      locker: GqlLocker;
+      lockingRewardTokens: GqlRewardToken;
+    }>(query);
+
+    return data;
+  }
+
+  public async getLockerUserData(): Promise<{
+    lockingUser: GqlLockingUser;
+    lockingUserVotingPower: number;
+  }> {
+    const query = jsonToGraphQLQuery({
+      query: {
         lockingUser: {
           totalLockedAmount: true,
           totalLockedAmountUsd: true,
@@ -631,22 +654,12 @@ export default class BeethovenxService {
           totalLostThroughKick: true,
           totalLostThroughKickUsd: true
         },
-        lockingRewardTokens: {
-          rewardRate: true,
-          rewardToken: true,
-          rewardPeriodFinish: true,
-          totalRewardAmount: true,
-          totalRewardAmountUsd: true,
-          apr: true
-        },
         lockingUserVotingPower: true
       }
     });
 
     const data = await this.get<{
-      locker: GqlLocker;
       lockingUser: GqlLockingUser;
-      lockingRewardTokens: GqlRewardToken;
       lockingUserVotingPower: number;
     }>(query, '0x4fbe899d37fb7514adf2f41b0630e018ec275a0c');
 

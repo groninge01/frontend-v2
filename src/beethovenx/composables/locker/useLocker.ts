@@ -31,68 +31,6 @@ export function useLocker() {
   const timestamp = computed(() => data.value?.locker.timestamp ?? bn(0));
   const block = computed(() => data.value?.locker.block ?? bn(0));
 
-  // async function approve(amount?: string) {
-  //   const tx = await erc20ContractService.erc20.approveToken(
-  //     getProvider(),
-  //     governanceContractsService.fbeets.fbeetsAddress,
-  //     governanceContractsService.fbeets.bptTokenAddress,
-  //     amount
-  //   );
-
-  //   addTransaction({
-  //     id: tx.hash,
-  //     type: 'tx',
-  //     action: 'approve',
-  //     summary: `Approve LP token`,
-  //     details: {
-  //       contractAddress: governanceContractsService.fbeets.bptTokenAddress,
-  //       spender: governanceContractsService.fbeets.fbeetsAddress
-  //     }
-  //   });
-
-  //   return tx;
-  // }
-
-  // async function stake(amount: string) {
-  //   const tx = await governanceContractsService.fbeets.enter(
-  //     getProvider(),
-  //     amount
-  //   );
-
-  //   addTransaction({
-  //     id: tx.hash,
-  //     type: 'tx',
-  //     action: 'deposit',
-  //     summary: 'Stake LP tokens for fBEETS',
-  //     details: {
-  //       contractAddress: governanceContractsService.fbeets.bptTokenAddress,
-  //       spender: governanceContractsService.fbeets.fbeetsAddress
-  //     }
-  //   });
-
-  //   return tx;
-  // }
-
-  // async function unStake(amount: string) {
-  //   const tx = await governanceContractsService.fbeets.leave(
-  //     getProvider(),
-  //     amount
-  //   );
-
-  //   addTransaction({
-  //     id: tx.hash,
-  //     type: 'tx',
-  //     action: 'claim',
-  //     summary: 'Burn fBEETS and withdraw LP tokens',
-  //     details: {
-  //       contractAddress: governanceContractsService.fbeets.bptTokenAddress,
-  //       spender: governanceContractsService.fbeets.fbeetsAddress
-  //     }
-  //   });
-
-  //   return tx;
-  // }
-
   return {
     lockerDataLoading,
     totalLockedAmount,
@@ -100,9 +38,5 @@ export function useLocker() {
     totalLockedPercentage,
     timestamp,
     block
-
-    // approve,
-    // stake,
-    // unStake
   };
 }
