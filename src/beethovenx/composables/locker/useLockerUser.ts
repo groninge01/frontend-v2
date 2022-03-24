@@ -1,108 +1,92 @@
 import useWeb3 from '@/services/web3/useWeb3';
 import { governanceContractsService } from '@/beethovenx/services/governance/governance-contracts.service';
 import { erc20ContractService } from '@/beethovenx/services/erc20/erc20-contracts.service';
-import useLockerQuery from '@/beethovenx/composables/locker/useLockerQuery';
+import useLockerUserQuery from '@/beethovenx/composables/locker/useLockerUserQuery';
 import { computed } from 'vue';
 import useTransactions from '@/composables/useTransactions';
 import useFarmUser from '@/beethovenx/composables/farms/useFarmUser';
 import usePools from '@/composables/pools/usePools';
 import { DecoratedFarm } from '@/beethovenx/services/subgraph/subgraph-types';
 import BigNumber from 'bignumber.js';
+import { lockerContractsService } from '@/beethovenx/services/locker/locker-contracts.service';
 
 function bn(num: number | string) {
   return new BigNumber(num);
 }
 
-export function useLocker() {
-  const lockerQuery = useLockerQuery();
-  const { isLoading, data } = lockerQuery;
+export function useLockerUser() {
+  const { getProvider, appNetworkConfig, account } = useWeb3();
+  const { addTransaction } = useTransactions();
+  const lockerUserQuery = useLockerUserQuery();
+  const { isLoading, data, refetch } = lockerUserQuery;
 
-  const lockerDataLoading = computed(() => isLoading.value);
+  const lockerUserDataLoading = computed(() => isLoading.value);
 
   const totalLockedAmount = computed(
-    () => data.value?.locker.totalLockedAmount
+    () => data.value?.gqlData.lockingUser.totalLockedAmount
   );
-  const totalLockedUsd = computed(
-    () => data.value?.locker.totalLockedUsd ?? bn(0)
+  const totalLockedAmountUsd = computed(
+    () => data.value?.gqlData.lockingUser.totalLockedAmountUsd
   );
-  const totalLockedPercentage = computed(
-    () => data.value?.locker.totalLockedPercentage ?? bn(0)
+  const lockingUserVotingPower = computed(
+    () => data.value?.gqlData.lockingUserVotingPower
   );
-  const timestamp = computed(() => data.value?.locker.timestamp ?? bn(0));
-  const block = computed(() => data.value?.locker.block ?? bn(0));
 
-  // async function approve(amount?: string) {
-  //   const tx = await erc20ContractService.erc20.approveToken(
-  //     getProvider(),
-  //     governanceContractsService.fbeets.fbeetsAddress,
-  //     governanceContractsService.fbeets.bptTokenAddress,
-  //     amount
-  //   );
+  const userAllowance = computed(
+    () => data.value?.fBeetsData.allowance.div(1e18) ?? bn(0)
+  );
 
-  //   addTransaction({
-  //     id: tx.hash,
-  //     type: 'tx',
-  //     action: 'approve',
-  //     summary: `Approve LP token`,
-  //     details: {
-  //       contractAddress: governanceContractsService.fbeets.bptTokenAddress,
-  //       spender: governanceContractsService.fbeets.fbeetsAddress
-  //     }
-  //   });
+  async function approve(amount?: string) {
+    const tx = await erc20ContractService.erc20.approveToken(
+      getProvider(),
+      lockerContractsService.locker.lockerAddress,
+      lockerContractsService.locker.fbeetsAddress,
+      amount
+    );
 
-  //   return tx;
-  // }
+    addTransaction({
+      id: tx.hash,
+      type: 'tx',
+      action: 'approve',
+      summary: `Approve token`,
+      details: {
+        contractAddress: lockerContractsService.locker.lockerAddress,
+        spender: lockerContractsService.locker.fbeetsAddress
+      }
+    });
 
-  // async function stake(amount: string) {
-  //   const tx = await governanceContractsService.fbeets.enter(
-  //     getProvider(),
-  //     amount
-  //   );
+    return tx;
+  }
 
-  //   addTransaction({
-  //     id: tx.hash,
-  //     type: 'tx',
-  //     action: 'deposit',
-  //     summary: 'Stake LP tokens for fBEETS',
-  //     details: {
-  //       contractAddress: governanceContractsService.fbeets.bptTokenAddress,
-  //       spender: governanceContractsService.fbeets.fbeetsAddress
-  //     }
-  //   });
+  async function lock(amount: string, account: string) {
+    const tx = await lockerContractsService.locker.lock(
+      getProvider(),
+      amount,
+      account
+    );
 
-  //   return tx;
-  // }
+    addTransaction({
+      id: tx.hash,
+      type: 'tx',
+      action: 'lock',
+      summary: 'Lock fBEETS',
+      details: {
+        contractAddress: lockerContractsService.locker.lockerAddress,
+        spender: lockerContractsService.locker.fbeetsAddress
+      }
+    });
 
-  // async function unStake(amount: string) {
-  //   const tx = await governanceContractsService.fbeets.leave(
-  //     getProvider(),
-  //     amount
-  //   );
-
-  //   addTransaction({
-  //     id: tx.hash,
-  //     type: 'tx',
-  //     action: 'claim',
-  //     summary: 'Burn fBEETS and withdraw LP tokens',
-  //     details: {
-  //       contractAddress: governanceContractsService.fbeets.bptTokenAddress,
-  //       spender: governanceContractsService.fbeets.fbeetsAddress
-  //     }
-  //   });
-
-  //   return tx;
-  // }
+    return tx;
+  }
 
   return {
-    lockerDataLoading,
+    lockerUserDataLoading,
     totalLockedAmount,
-    totalLockedUsd,
-    totalLockedPercentage,
-    timestamp,
-    block
-
-    // approve,
-    // stake,
-    // unStake
+    totalLockedAmountUsd,
+    lockingUserVotingPower,
+    userAllowance,
+    refetch,
+    approve,
+    lock
   };
 }

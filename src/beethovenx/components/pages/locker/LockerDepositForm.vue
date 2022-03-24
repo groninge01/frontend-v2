@@ -97,7 +97,7 @@ import useWeb3 from '@/services/web3/useWeb3';
 import useEthers from '@/composables/useEthers';
 import BigNumber from 'bignumber.js';
 import { useFreshBeets } from '@/beethovenx/composables/stake/useFreshBeets';
-import { useLocker } from '@/beethovenx/composables/locker/useLocker';
+import { useLockerUser } from '@/beethovenx/composables/locker/useLockerUser';
 import useAllowanceAvailableQuery from '@/beethovenx/composables/farms/useAllowanceAvailableQuery';
 import { governanceContractsService } from '@/beethovenx/services/governance/governance-contracts.service';
 import useTokens from '@/composables/useTokens';
@@ -143,7 +143,7 @@ export default defineComponent({
     const { fNum } = useNumbers();
     const { t } = useI18n();
     const { userUnstakedFbeetsBalance, freshBeetsQuery } = useFreshBeets();
-    const { userAllowance, refetch, approve, lock } = useLocker();
+    const { userAllowance, refetch, approve, lock } = useLockerUser();
 
     const { farmUserRefetch } = useFarmUser(appNetworkConfig.fBeets.farmId);
     const { refetchAllowances } = useTokens();
@@ -213,7 +213,7 @@ export default defineComponent({
       const amountScaled = scale(new BigNumber(amount.value), 18);
 
       try {
-        const tx = await lock(amountScaled.toString());
+        const tx = await lock(amountScaled.toString(), account.value);
 
         if (!tx) {
           depositing.value = false;

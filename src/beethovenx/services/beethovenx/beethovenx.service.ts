@@ -629,7 +629,9 @@ export default class BeethovenxService {
     return data;
   }
 
-  public async getLockerUserData(): Promise<{
+  public async getLockerUserData(
+    account: string
+  ): Promise<{
     lockingUser: GqlLockingUser;
     lockingUserVotingPower: number;
   }> {
@@ -661,12 +663,14 @@ export default class BeethovenxService {
     const data = await this.get<{
       lockingUser: GqlLockingUser;
       lockingUserVotingPower: number;
-    }>(query, '0x4fbe899d37fb7514adf2f41b0630e018ec275a0c');
+    }>(query, account);
 
     return data;
   }
 
-  public async getLockerRewardsData(): Promise<GqlLockingReward[]> {
+  public async getLockerRewardsData(
+    account: string
+  ): Promise<{ lockingPendingRewards: GqlLockingReward[] }> {
     const query = jsonToGraphQLQuery({
       query: {
         lockingPendingRewards: {
@@ -677,9 +681,9 @@ export default class BeethovenxService {
       }
     });
 
-    const data = await this.get<GqlLockingReward[]>(
+    const data = await this.get<{ lockingPendingRewards: GqlLockingReward[] }>(
       query,
-      '0x4fbe899d37fb7514adf2f41b0630e018ec275a0c'
+      account
     );
     return data;
   }

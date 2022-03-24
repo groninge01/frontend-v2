@@ -19,7 +19,7 @@ export function useLockerRewards() {
 
   const lockerRewardDataLoading = computed(() => isLoading.value);
 
-  const rewards = computed(() => data.value?.map(reward => reward));
+  const rewards = computed(() => data.value?.lockingPendingRewards);
 
   return {
     lockerRewardDataLoading,

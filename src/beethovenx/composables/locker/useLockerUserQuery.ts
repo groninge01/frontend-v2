@@ -5,23 +5,37 @@ import useApp from '@/composables/useApp';
 import useWeb3 from '@/services/web3/useWeb3';
 import { beethovenxService } from '@/beethovenx/services/beethovenx/beethovenx.service';
 import { GqlLockingUser } from '@/beethovenx/services/beethovenx/beethovenx-types';
+import BigNumber from 'bignumber.js';
+import { governanceContractsService } from '@/beethovenx/services/governance/governance-contracts.service';
 
 interface QueryResponse {
-  lockingUser: GqlLockingUser;
-  lockingUserVotingPower: number;
+  gqlData: { lockingUser: GqlLockingUser; lockingUserVotingPower: number };
+  fBeetsData: {
+    allowance: BigNumber;
+  };
 }
 
-export default function useLockerQuery() {
+export default function useLockerUserQuery() {
   const { appLoading } = useApp();
-  const queryKey = reactive(QUERY_KEYS.Locker.all);
+  const { isWalletReady, account } = useWeb3();
+  const queryKey = reactive(QUERY_KEYS.Locker.User(account));
+  const enabled = computed(() => !appLoading.value && isWalletReady.value);
 
   const queryFn = async () => {
-    const data = await beethovenxService.getLockerUserData();
-    return data;
+    const gqlData = await beethovenxService.getLockerUserData(account.value);
+    const fBeetsData = await governanceContractsService.fbeets.getData(
+      account.value
+    );
+    return {
+      gqlData,
+      fBeetsData: {
+        allowance: new BigNumber(fBeetsData.allowance.toString())
+      }
+    };
   };
 
   const queryOptions = reactive({
-    enabled: true
+    enabled
   });
 
   return useQuery<QueryResponse>(queryKey, queryFn, queryOptions);

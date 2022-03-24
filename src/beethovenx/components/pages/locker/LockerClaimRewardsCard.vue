@@ -16,7 +16,7 @@
       {{ fNum(pendingRewardToken, 'token_fixed') }} {{ rewardTokenSymbol }}
     </div>
     <div class="truncate flex items-center pb-8">
-      {{ fNum(pendingBeetsValue + pendingRewardTokenValue, 'usd') }}
+      ({{ fNum(pendingBeetsValue + pendingRewardTokenValue, 'usd') }})
     </div>
     <template v-slot:footer>
       <BalBtn

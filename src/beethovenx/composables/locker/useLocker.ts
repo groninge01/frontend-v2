@@ -15,72 +15,25 @@ function bn(num: number | string) {
 }
 
 export function useLocker() {
-  const { getProvider, appNetworkConfig } = useWeb3();
-  const { addTransaction } = useTransactions();
   const lockerQuery = useLockerQuery();
-  const { isLoading, data, refetch } = lockerQuery;
+  const { isLoading, data } = lockerQuery;
 
   const lockerDataLoading = computed(() => isLoading.value);
 
   const totalLockedAmount = computed(
-    () => data.value?.gqlData.locker.totalLockedAmount
+    () => data.value?.locker.totalLockedAmount
   );
-  const totalLockedUsd = computed(
-    () => data.value?.gqlData.locker.totalLockedUsd
-  );
+  const totalLockedUsd = computed(() => data.value?.locker.totalLockedUsd);
   const totalLockedPercentage = computed(
-    () => data.value?.gqlData.locker.totalLockedPercentage
+    () => data.value?.locker.totalLockedPercentage
   );
-  const timestamp = computed(() => data.value?.gqlData.locker.timestamp);
-  const block = computed(() => data.value?.gqlData.locker.block);
+  const timestamp = computed(() => data.value?.locker.timestamp);
+  const block = computed(() => data.value?.locker.block);
 
   const totalApr = computed(() => {
-    const tokens = data.value?.gqlData.lockingRewardTokens;
+    const tokens = data.value?.lockingRewardTokens;
     return sumBy(tokens, token => parseFloat(token.apr));
   });
-
-  const userAllowance = computed(
-    () => data.value?.contractData.allowance.div(1e18) ?? bn(0)
-  );
-
-  async function approve(amount?: string) {
-    const tx = await erc20ContractService.erc20.approveToken(
-      getProvider(),
-      lockerContractsService.locker.lockerAddress,
-      lockerContractsService.locker.fbeetsAddress,
-      amount
-    );
-
-    addTransaction({
-      id: tx.hash,
-      type: 'tx',
-      action: 'approve',
-      summary: `Approve token`,
-      details: {
-        contractAddress: lockerContractsService.locker.lockerAddress,
-        spender: lockerContractsService.locker.fbeetsAddress
-      }
-    });
-
-    return tx;
-  }
-
-  async function lock(amount: string) {
-    const tx = await lockerContractsService.locker.lock(getProvider(), amount);
-
-    addTransaction({
-      id: tx.hash,
-      type: 'tx',
-      action: 'lock',
-      summary: 'Lock fBEETS',
-      details: {
-        contractAddress: lockerContractsService.locker.lockerAddress,
-        spender: lockerContractsService.locker.fbeetsAddress
-      }
-    });
-
-    return tx;
-  }
 
   return {
     lockerDataLoading,
@@ -89,10 +42,6 @@ export function useLocker() {
     totalLockedPercentage,
     timestamp,
     block,
-    totalApr,
-    userAllowance,
-    refetch,
-    approve,
-    lock
+    totalApr
   };
 }

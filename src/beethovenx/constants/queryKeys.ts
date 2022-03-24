@@ -125,7 +125,12 @@ const QUERY_KEYS = {
   },
   Locker: {
     all: [LOCKER_ROOT_KEY, 'all'],
-    Rewards: (account: Ref<string>) => [LOCKER_ROOT_KEY, 'user', { account }]
+    Rewards: (account: Ref<string>) => [
+      LOCKER_ROOT_KEY,
+      'rewards',
+      { account }
+    ],
+    User: (account: Ref<string>) => [LOCKER_ROOT_KEY, 'user', { account }]
   }
 };
 

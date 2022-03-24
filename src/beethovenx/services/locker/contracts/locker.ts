@@ -64,8 +64,9 @@ export default class Locker {
   //   ]);
   // }
 
-  public async lock(provider: Web3Provider, amount: string) {
-    return sendTransaction(provider, this.fbeetsAddress, LockerAbi, 'lock', [
+  public async lock(provider: Web3Provider, amount: string, account: string) {
+    return sendTransaction(provider, this.lockerAddress, LockerAbi, 'lock', [
+      account,
       BigNumber.from(amount)
     ]);
   }
