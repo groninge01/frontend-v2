@@ -71,6 +71,16 @@ export default class Locker {
     ]);
   }
 
+  public async getReward(provider: Web3Provider, account: string) {
+    return sendTransaction(
+      provider,
+      this.lockerAddress,
+      LockerAbi,
+      'getReward',
+      [account]
+    );
+  }
+
   // public async leave(provider: Web3Provider, amount: string) {
   //   return sendTransaction(
   //     provider,

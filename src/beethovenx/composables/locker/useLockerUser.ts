@@ -32,6 +32,10 @@ export function useLockerUser() {
     () => data.value?.gqlData.lockingUserVotingPower
   );
 
+  const lockedToVotingPowerRatio = computed(
+    () => data.value?.gqlData.lockingUser.lockedToVotingPowerRatio
+  );
+
   const userAllowance = computed(
     () => data.value?.fBeetsData.allowance.div(1e18) ?? bn(0)
   );
@@ -79,14 +83,41 @@ export function useLockerUser() {
     return tx;
   }
 
+  async function getReward(account: string) {
+    try {
+      const provider = getProvider();
+      const tx = await lockerContractsService.locker.getReward(
+        provider,
+        account
+      );
+
+      addTransaction({
+        id: tx.hash,
+        type: 'tx',
+        action: 'getReward',
+        summary: 'Get locker rewards',
+        details: {
+          contractAddress: lockerContractsService.locker.lockerAddress,
+          spender: lockerContractsService.locker.lockerAddress
+        }
+      });
+
+      return tx;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return {
     lockerUserDataLoading,
     totalLockedAmount,
     totalLockedAmountUsd,
     lockingUserVotingPower,
     userAllowance,
+    lockedToVotingPowerRatio,
     refetch,
     approve,
-    lock
+    lock,
+    getReward
   };
 }

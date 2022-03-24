@@ -44,6 +44,7 @@ export type TransactionAction =
   | 'create'
   | 'createPool'
   | 'lock'
+  | 'getReward'
   | 'fundPool';
 
 export type TransactionType = 'order' | 'tx';

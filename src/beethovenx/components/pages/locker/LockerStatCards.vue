@@ -14,7 +14,8 @@ const { fNum } = useNumbers();
 const {
   totalLockedAmount,
   totalLockedAmountUsd,
-  lockingUserVotingPower
+  lockingUserVotingPower,
+  lockedToVotingPowerRatio
 } = useLockerUser();
 
 const { rewards } = useLockerRewards();
@@ -35,7 +36,8 @@ const { rewards } = useLockerRewards();
           fBEETS
         </div>
         <div class="truncate">
-          ({{ fNum('0.002', 'percent') }} of total locked fBEETS)
+          ({{ fNum(lockedToVotingPowerRatio, 'percent') }} of total locked
+          fBEETS)
         </div>
       </BalCard>
       <BalCard>

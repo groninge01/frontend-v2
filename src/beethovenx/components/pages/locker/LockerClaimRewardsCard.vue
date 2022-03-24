@@ -24,8 +24,8 @@
         block
         color="gradient"
         :disabled="pendingBeets <= 0 && pendingRewardToken <= 0"
-        :loading="harvesting"
-        @click.prevent="harvestRewards"
+        :loading="gettingReward"
+        @click.prevent="getLockerReward"
       />
     </template>
   </BalCard>
@@ -35,8 +35,10 @@
 import { defineComponent, ref } from 'vue';
 import useNumbers from '@/composables/useNumbers';
 import useEthers from '@/composables/useEthers';
+import useWeb3 from '@/services/web3/useWeb3';
 import useFarm from '@/beethovenx/composables/farms/useFarm';
 import useFarmUser from '@/beethovenx/composables/farms/useFarmUser';
+import { useLockerUser } from '@/beethovenx/composables/locker/useLockerUser';
 
 export default defineComponent({
   name: 'FarmHarvestRewardsCard',
@@ -84,34 +86,35 @@ export default defineComponent({
   setup(props) {
     const { fNum } = useNumbers();
     const { txListener } = useEthers();
-    const { harvest } = useFarm(ref(props.tokenAddress), ref(props.farmId));
-    const harvesting = ref(false);
+    const { getReward } = useLockerUser();
+    const gettingReward = ref(false);
     const { farmUserRefetch } = useFarmUser(props.farmId);
+    const { account } = useWeb3();
 
-    async function harvestRewards(): Promise<void> {
-      harvesting.value = true;
-      const tx = await harvest();
+    async function getLockerReward(): Promise<void> {
+      gettingReward.value = true;
+      const tx = await getReward(account.value);
 
       if (!tx) {
-        harvesting.value = false;
+        gettingReward.value = false;
         return;
       }
 
       txListener(tx, {
         onTxConfirmed: async () => {
           await farmUserRefetch.value();
-          harvesting.value = false;
+          gettingReward.value = false;
         },
         onTxFailed: () => {
-          harvesting.value = false;
+          gettingReward.value = false;
         }
       });
     }
 
     return {
       fNum,
-      harvestRewards,
-      harvesting
+      getLockerReward,
+      gettingReward
     };
   }
 });

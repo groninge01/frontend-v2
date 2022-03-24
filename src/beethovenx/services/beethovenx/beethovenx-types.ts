@@ -434,6 +434,7 @@ export interface GqlLockingPeriod {
   epoch: Scalars['BigInt'];
   lockAmount: Scalars['BigDecimal'];
   lockAmountUsd: Scalars['BigDecimal'];
+  withdrawn: Scalars['Boolean'];
 }
 export interface GqlLockingUser {
   __typename?: 'GqlLockingUser';
@@ -450,6 +451,8 @@ export interface GqlLockingUser {
   totalUnlockedAmountUsd: Scalars['BigDecimal'];
   totalLostThroughKick: Scalars['BigDecimal'];
   totalLostThroughKickUsd: Scalars['BigDecimal'];
+  totalVotingPower: Scalars['BigDecimal'];
+  lockedToVotingPowerRatio: Scalars['BigDecimal'];
   timestamp: Scalars['BigInt'];
   block: Scalars['BigInt'];
 }

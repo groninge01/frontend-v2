@@ -642,10 +642,13 @@ export default class BeethovenxService {
           totalLockedAmountUsd: true,
           totalUnlockedAmount: true,
           totalUnlockedAmountUsd: true,
+          totalVotingPower: true,
+          lockedToVotingPowerRatio: true,
           lockingPeriods: {
             lockAmount: true,
             lockAmountUsd: true,
-            epoch: true
+            epoch: true,
+            withdrawn: true
           },
           totalClaimedRewardsUsd: true,
           claimedRewards: {
