@@ -83,13 +83,10 @@ export function useLockerUser() {
     return tx;
   }
 
-  async function getReward(account: string) {
+  async function getReward() {
     try {
       const provider = getProvider();
-      const tx = await lockerContractsService.locker.getReward(
-        provider,
-        account
-      );
+      const tx = await lockerContractsService.locker.getReward(provider);
 
       addTransaction({
         id: tx.hash,

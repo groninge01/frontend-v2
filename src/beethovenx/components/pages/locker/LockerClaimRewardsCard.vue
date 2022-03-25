@@ -35,8 +35,6 @@
 import { defineComponent, ref } from 'vue';
 import useNumbers from '@/composables/useNumbers';
 import useEthers from '@/composables/useEthers';
-import useWeb3 from '@/services/web3/useWeb3';
-import useFarm from '@/beethovenx/composables/farms/useFarm';
 import useFarmUser from '@/beethovenx/composables/farms/useFarmUser';
 import { useLockerUser } from '@/beethovenx/composables/locker/useLockerUser';
 
@@ -89,11 +87,10 @@ export default defineComponent({
     const { getReward } = useLockerUser();
     const gettingReward = ref(false);
     const { farmUserRefetch } = useFarmUser(props.farmId);
-    const { account } = useWeb3();
 
     async function getLockerReward(): Promise<void> {
       gettingReward.value = true;
-      const tx = await getReward(account.value);
+      const tx = await getReward();
 
       if (!tx) {
         gettingReward.value = false;

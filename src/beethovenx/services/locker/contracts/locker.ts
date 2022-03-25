@@ -71,13 +71,13 @@ export default class Locker {
     ]);
   }
 
-  public async getReward(provider: Web3Provider, account: string) {
+  public async getReward(provider: Web3Provider) {
     return sendTransaction(
       provider,
       this.lockerAddress,
       LockerAbi,
       'getReward',
-      [account]
+      []
     );
   }
 
