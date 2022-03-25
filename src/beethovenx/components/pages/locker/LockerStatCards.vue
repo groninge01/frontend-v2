@@ -14,6 +14,8 @@ const { fNum } = useNumbers();
 const {
   totalLockedAmount,
   totalLockedAmountUsd,
+  totalUnlockedAmount,
+  totalUnlockedAmountUsd,
   lockingUserVotingPower,
   lockedToVotingPowerRatio
 } = useLockerUser();
@@ -22,12 +24,12 @@ const { rewards } = useLockerRewards();
 </script>
 
 <template>
-  <div class="grid grid-cols-2 grid-rows-2 sm:grid-flow-col gap-4 mb-6">
-    <template v-if="fBeetsLoading">
-      <BalLoadingBlock v-for="n in 3" :key="n" class="h-24" />
-    </template>
-    <template v-else>
-      <BalCard>
+  <div class="grid grid-cols-2 gap-4">
+    <div class="justify-items-stretch">
+      <template v-if="fBeetsLoading">
+        <BalLoadingBlock class="h-24" />
+      </template>
+      <BalCard growContent class="mb-4">
         <div class="text-sm text-gray-500 font-medium mb-2">
           My Voting Power
         </div>
@@ -39,29 +41,40 @@ const { rewards } = useLockerRewards();
           ({{ fNum(lockedToVotingPowerRatio, 'percent') }} of total locked
           fBEETS)
         </div>
-      </BalCard>
-      <BalCard>
+
+        <div class="my-5">
+          <div class="h-1 w-full flex-1 bg-gray-700 rounded-3xl" />
+        </div>
         <div class="text-sm text-gray-500 font-medium mb-2">
           My Locked Tokens
         </div>
-        <div>
-          <div class="text-xl font-medium truncate flex items-center">
-            {{ fNum(totalLockedAmount, 'token') }}
-            fBEETS
-          </div>
-          <div class="truncate">({{ fNum(totalLockedAmountUsd, 'usd') }})</div>
+        <div class="text-xl font-medium truncate flex items-center">
+          {{ fNum(totalLockedAmount, 'token') }}
+          fBEETS
         </div>
+        <div class="truncate">({{ fNum(totalLockedAmountUsd, 'usd') }})</div>
+        <div class="my-5">
+          <div class="h-1 w-full flex-1 bg-gray-700 rounded-3xl" />
+        </div>
+        <div class="text-sm text-gray-500 font-medium mb-2">
+          My Unlocked Tokens
+        </div>
+        <div class="text-xl font-medium truncate flex items-center">
+          {{ fNum(totalUnlockedAmount, 'token') }}
+          fBEETS
+        </div>
+        <div class="truncate">({{ fNum(totalUnlockedAmountUsd, 'usd') }})</div>
       </BalCard>
-      <LockerClaimRewardsCard
-        class="col-span-2 sm:row-span-2"
-        :has-beets-rewards="true"
-        :farm-id="appNetworkConfig.fBeets.farmId"
-        :token-address="appNetworkConfig.fBeets.poolAddress"
-        :pending-beets="rewards[0].amount || 100"
-        :pending-beets-value="rewards[0].amountUsd || 100"
-        :pending-reward-token-value="0"
-        :pending-reward-token="0"
-      />
-    </template>
+    </div>
+    <LockerClaimRewardsCard
+      class="col-span-1 sm:row-span-3"
+      :has-beets-rewards="true"
+      :farm-id="appNetworkConfig.fBeets.farmId"
+      :token-address="appNetworkConfig.fBeets.poolAddress"
+      :pending-beets="rewards[0].amount || 100"
+      :pending-beets-value="rewards[0].amountUsd || 100"
+      :pending-reward-token-value="0"
+      :pending-reward-token="0"
+    />
   </div>
 </template>

@@ -28,6 +28,12 @@ export function useLockerUser() {
   const totalLockedAmountUsd = computed(
     () => data.value?.gqlData.lockingUser.totalLockedAmountUsd
   );
+  const totalUnlockedAmount = computed(
+    () => data.value?.gqlData.lockingUser.totalUnlockedAmount
+  );
+  const totalUnlockedAmountUsd = computed(
+    () => data.value?.gqlData.lockingUser.totalUnlockedAmountUsd
+  );
   const lockingUserVotingPower = computed(
     () => data.value?.gqlData.lockingUserVotingPower
   );
@@ -109,6 +115,8 @@ export function useLockerUser() {
     lockerUserDataLoading,
     totalLockedAmount,
     totalLockedAmountUsd,
+    totalUnlockedAmount,
+    totalUnlockedAmountUsd,
     lockingUserVotingPower,
     userAllowance,
     lockedToVotingPowerRatio,

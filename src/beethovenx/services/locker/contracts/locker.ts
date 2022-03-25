@@ -14,56 +14,6 @@ export default class Locker {
     this.service = service;
   }
 
-  public async getData(
-    account: string
-  ): Promise<{
-    allowance: BigNumber;
-  }> {
-    const multicaller = new Multicaller(
-      this.configService.network.key,
-      this.service.provider,
-      LockerAbi
-    );
-
-    multicaller.call('allowance', this.lockerAddress, 'allowance', [
-      account,
-      this.fbeetsAddress
-    ]);
-
-    return multicaller.execute();
-  }
-
-  // public async getTotalLockerSupply(): Promise<BigNumber> {
-  //   return await call(this.service.provider, LockerAbi, [
-  //     this.fbeetsAddress,
-  //     'totalSupply'
-  //   ]);
-  // }
-
-  // public async getTotalVestedTokenAmount(): Promise<BigNumber> {
-  //   return await call(this.service.provider, LockerAbi, [
-  //     this.bptTokenAddress,
-  //     'balanceOf',
-  //     [this.fbeetsAddress]
-  //   ]);
-  // }
-
-  // public async fBeetsBalanceOf(account: string): Promise<BigNumber> {
-  //   return await call(this.service.provider, LockerAbi, [
-  //     this.fbeetsAddress,
-  //     'balanceOf',
-  //     [account]
-  //   ]);
-  // }
-
-  // public async bptBalanceOf(account: string): Promise<BigNumber> {
-  //   return await call(this.service.provider, ERC20Abi, [
-  //     this.bptTokenAddress,
-  //     'balanceOf',
-  //     [account]
-  //   ]);
-  // }
-
   public async lock(provider: Web3Provider, amount: string, account: string) {
     return sendTransaction(provider, this.lockerAddress, LockerAbi, 'lock', [
       account,

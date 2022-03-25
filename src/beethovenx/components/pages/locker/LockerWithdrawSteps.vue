@@ -2,7 +2,7 @@
 import useWeb3 from '@/services/web3/useWeb3';
 import StepContainer from '@/beethovenx/components/containers/StepContainer.vue';
 import BalBtn from '@/components/_global/BalBtn/BalBtn.vue';
-import FarmWithdrawForm from '@/beethovenx/components/pages/farm/FarmWithdrawForm.vue';
+import LockerWithdrawForm from '@/beethovenx/components/pages/locker/LockerWithdrawForm.vue';
 import FreshBeetsWithdrawForm from '@/beethovenx/components/pages/fbeets/FreshBeetsWithdrawForm.vue';
 import { useFreshBeets } from '@/beethovenx/composables/stake/useFreshBeets';
 import useFarmUserQuery from '@/beethovenx/composables/farms/useFarmUserQuery';
@@ -29,11 +29,11 @@ function handleFarmWithdrawal(txReceipt): void {
 <template>
   <StepContainer
     :step-number="1"
-    title="Take your fBEETS from the fBEETS locker"
-    :complete="props.hasUnstakedFbeets || props.hasBpt"
+    title="Withdraw ALL your unlocked fBEETS from the fBEETS locker"
+    :complete="false"
   >
     <template v-slot:content>
-      <FarmWithdrawForm
+      <LockerWithdrawForm
         :farm-id="appNetworkConfig.fBeets.farmId"
         :token-address="appNetworkConfig.fBeets.address"
         token-name="fBEETS"

@@ -139,8 +139,8 @@ const dataLoading = computed(
 
 const tabs = [
   { value: 'deposit', label: 'Deposit' },
-  { value: 'withdraw', label: 'Withdraw' },
-  { value: 'locks', label: 'My Locks' }
+  { value: 'relock', label: 'Relock' },
+  { value: 'withdraw', label: 'Withdraw' }
 ];
 
 const activeTab = ref(tabs[0].value);
@@ -180,17 +180,17 @@ const activeTab = ref(tabs[0].value);
         <div class="mb-4">
           <BalTabs v-model="activeTab" :tabs="tabs" no-pad class="-mb-px" />
         </div>
-        <LockerCurrentLocks
-          v-if="activeTab === 'locks'"
-          :loading="dataLoading"
-          :locks="data.lockingUser.lockingPeriods"
-        />
         <LockerDepositSteps
           v-if="activeTab === 'deposit'"
           :hasBpt="hasBpt"
           :hasUnstakedFbeets="hasUnstakedFbeets"
           :hasStakedFbeets="fbeetsDeposited.gt(0)"
           :loading="dataLoading"
+        />
+        <LockerCurrentLocks
+          v-if="activeTab === 'relock'"
+          :loading="dataLoading"
+          :locks="data.lockingUser.lockingPeriods"
         />
         <LockerWithdrawSteps
           v-if="activeTab === 'withdraw'"

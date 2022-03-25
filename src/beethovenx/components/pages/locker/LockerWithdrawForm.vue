@@ -1,45 +1,5 @@
 <template>
   <BalForm ref="withdrawForm" @on-submit="submit">
-    <div>
-      <BalTextInput
-        name="Withdraw"
-        v-model="amount"
-        v-model:isValid="validInput"
-        :rules="amountRules()"
-        :disabled="withdrawing"
-        type="number"
-        min="0"
-        step="any"
-        placeholder="0"
-        :decimal-limit="18"
-        validate-on="input"
-        prepend-border
-        append-shadow
-      >
-        <template v-slot:info>
-          <div
-            class="cursor-pointer flex"
-            @click.prevent="amount = bptDeposited"
-          >
-            {{ $t('balance') }}:
-            <BalLoadingBlock v-if="loading" class="h-4 w-24 ml-1" white />
-            <span v-else>&nbsp;{{ bptDeposited }}</span>
-          </div>
-        </template>
-        <template v-slot:append>
-          <div class="p-2">
-            <BalBtn
-              size="xs"
-              color="white"
-              @click.prevent="amount = bptDeposited"
-            >
-              {{ $t('max') }}
-            </BalBtn>
-          </div>
-        </template>
-      </BalTextInput>
-    </div>
-
     <div class="pt-4">
       <BalBtn
         v-if="!isWalletReady"
@@ -57,7 +17,7 @@
           block
           @click="trackGoal(Goals.ClickFarmWithdraw)"
         >
-          Burn fBEETS
+          Withdraw ALL unlocked fBEETS
         </BalBtn>
       </template>
     </div>
@@ -92,6 +52,7 @@ import useEthers from '@/composables/useEthers';
 import { useFreshBeets } from '@/beethovenx/composables/stake/useFreshBeets';
 import BalLoadingBlock from '@/components/_global/BalLoadingBlock/BalLoadingBlock.vue';
 import useFarmUser from '@/beethovenx/composables/farms/useFarmUser';
+import { useLockerUser } from '@/beethovenx/composables/locker/useLockerUser';
 
 type DataProps = {
   withdrawForm: FormRef;
@@ -126,6 +87,8 @@ export default defineComponent({
       unStake,
       freshBeetsQuery
     } = useFreshBeets();
+
+    const { totalUnlockedAmount } = useLockerUser();
 
     const { txListener } = useEthers();
     const {
@@ -215,7 +178,8 @@ export default defineComponent({
       // methods
       submit,
       trackGoal,
-      bptDeposited
+      bptDeposited,
+      totalUnlockedAmount
     };
   }
 });
