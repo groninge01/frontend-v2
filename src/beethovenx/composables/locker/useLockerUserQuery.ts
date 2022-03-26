@@ -7,7 +7,6 @@ import { beethovenxService } from '@/beethovenx/services/beethovenx/beethovenx.s
 import { GqlLockingUser } from '@/beethovenx/services/beethovenx/beethovenx-types';
 import BigNumber from 'bignumber.js';
 import { governanceContractsService } from '@/beethovenx/services/governance/governance-contracts.service';
-import { lockerContractsService } from '@/beethovenx/services/locker/locker-contracts.service';
 
 interface QueryResponse {
   gqlData: { lockingUser: GqlLockingUser; lockingUserVotingPower: number };

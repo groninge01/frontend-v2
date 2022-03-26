@@ -21,6 +21,26 @@ export default class Locker {
     ]);
   }
 
+  public async relock(provider: Web3Provider) {
+    return sendTransaction(
+      provider,
+      this.lockerAddress,
+      LockerAbi,
+      'processExpiredLocks',
+      [true]
+    );
+  }
+
+  public async withdraw(provider: Web3Provider) {
+    return sendTransaction(
+      provider,
+      this.lockerAddress,
+      LockerAbi,
+      'processExpiredLocks',
+      [false]
+    );
+  }
+
   public async getReward(provider: Web3Provider) {
     return sendTransaction(
       provider,

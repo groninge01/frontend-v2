@@ -89,6 +89,40 @@ export function useLockerUser() {
     return tx;
   }
 
+  async function relock() {
+    const tx = await lockerContractsService.locker.relock(getProvider());
+
+    addTransaction({
+      id: tx.hash,
+      type: 'tx',
+      action: 'lock',
+      summary: 'Locking fBEETS',
+      details: {
+        contractAddress: lockerContractsService.locker.lockerAddress,
+        spender: lockerContractsService.locker.fbeetsAddress
+      }
+    });
+
+    return tx;
+  }
+
+  async function withdraw() {
+    const tx = await lockerContractsService.locker.withdraw(getProvider());
+
+    addTransaction({
+      id: tx.hash,
+      type: 'tx',
+      action: 'withdraw',
+      summary: 'Withdrawing fBEETS',
+      details: {
+        contractAddress: lockerContractsService.locker.lockerAddress,
+        spender: lockerContractsService.locker.fbeetsAddress
+      }
+    });
+
+    return tx;
+  }
+
   async function getReward() {
     try {
       const provider = getProvider();
@@ -121,8 +155,11 @@ export function useLockerUser() {
     userAllowance,
     lockedToVotingPowerRatio,
     refetch,
+    lockerUserQuery,
     approve,
     lock,
+    relock,
+    withdraw,
     getReward
   };
 }

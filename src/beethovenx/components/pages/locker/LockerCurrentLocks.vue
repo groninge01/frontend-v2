@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import useWeb3 from '@/services/web3/useWeb3';
-import { useFreshBeets } from '@/beethovenx/composables/stake/useFreshBeets';
 import useFarmUserQuery from '@/beethovenx/composables/farms/useFarmUserQuery';
+import LockerTable from './LockerTable.vue';
+import { flatten } from 'lodash';
 
 type Props = {
   locks: any;
@@ -11,8 +12,8 @@ type Props = {
 const props = defineProps<Props>();
 
 const { appNetworkConfig } = useWeb3();
-const { freshBeetsQuery } = useFreshBeets();
-const farmUserQuery = useFarmUserQuery(appNetworkConfig.fBeets.farmId);
+import useLockerUserQuery from '@/beethovenx/composables/locker/useLockerUserQuery';
+import { computed } from 'vue';
 
 function epochToDate(epoch): Date {
   const twelveWeeksInSeconds = 12 * 7 * 24 * 60 * 60 * 1000;
@@ -21,22 +22,27 @@ function epochToDate(epoch): Date {
   return date;
 }
 
-function handleFarmDeposit(txReceipt): void {
-  freshBeetsQuery.refetch.value();
-  farmUserQuery.refetch.value();
-}
+/**
+ * QUERIES
+ */
+const lockerUserQuery = useLockerUserQuery();
+
+/**
+ * COMPUTED
+ */
+const lockingPeriods = computed(() =>
+  lockerUserQuery.data.value
+    ? lockerUserQuery.data.value.gqlData.lockingUser.lockingPeriods.filter(
+        period => !period.withdrawn
+      )
+    : []
+);
 </script>
 
 <template>
-  <BalCard v-for="(lock, index) in locks" :key="index" class="mb-2">
-    {{ lock.lockAmount }}
-    {{ epochToDate(lock.epoch) }}
-    <template v-slot:footer>
-      <BalBtn :disabled="props.disabled" size="sm">
-        <div class="w-28">
-          Relock
-        </div>
-      </BalBtn>
-    </template>
-  </BalCard>
+  <LockerTable
+    :locking-periods="lockingPeriods"
+    :is-loading="loading"
+    :no-results-label="$t('poolTransactions.noResults.swaps')"
+  />
 </template>

@@ -12,6 +12,7 @@ import BalTabs from '@/components/_global/BalTabs/BalTabs.vue';
 import useFarmUserQuery from '@/beethovenx/composables/farms/useFarmUserQuery';
 import LockerDepositSteps from '@/beethovenx/components/pages/locker/LockerDepositSteps.vue';
 import LockerWithdrawSteps from '@/beethovenx/components/pages/locker/LockerWithdrawSteps.vue';
+import LockerRelockSteps from '@/beethovenx/components/pages/locker/LockerRelockSteps.vue';
 import useTokens from '@/composables/useTokens';
 import { getAddress } from '@ethersproject/address';
 import useFarmUser from '@/beethovenx/composables/farms/useFarmUser';
@@ -138,9 +139,10 @@ const dataLoading = computed(
 );
 
 const tabs = [
-  { value: 'deposit', label: 'Deposit' },
+  { value: 'lock', label: 'Lock' },
   { value: 'relock', label: 'Relock' },
-  { value: 'withdraw', label: 'Withdraw' }
+  { value: 'withdraw', label: 'Withdraw' },
+  { value: 'my-locker', label: 'My Locker' }
 ];
 
 const activeTab = ref(tabs[0].value);
@@ -181,13 +183,13 @@ const activeTab = ref(tabs[0].value);
           <BalTabs v-model="activeTab" :tabs="tabs" no-pad class="-mb-px" />
         </div>
         <LockerDepositSteps
-          v-if="activeTab === 'deposit'"
+          v-if="activeTab === 'lock'"
           :hasBpt="hasBpt"
           :hasUnstakedFbeets="hasUnstakedFbeets"
           :hasStakedFbeets="fbeetsDeposited.gt(0)"
           :loading="dataLoading"
         />
-        <LockerCurrentLocks
+        <LockerRelockSteps
           v-if="activeTab === 'relock'"
           :loading="dataLoading"
           :locks="data.lockingUser.lockingPeriods"
@@ -198,6 +200,11 @@ const activeTab = ref(tabs[0].value);
           :hasUnstakedFbeets="hasUnstakedFbeets"
           :hasStakedFbeets="fbeetsDeposited.gt(0)"
           :loading="dataLoading"
+        />
+        <LockerCurrentLocks
+          v-if="activeTab === 'my-locker'"
+          :loading="dataLoading"
+          :locks="data.lockingUser.lockingPeriods"
         />
       </div>
       <div class="w-full lg:max-w-xl mx-auto md:mx-0 lg:ml-6 md:block lg:w-72">
