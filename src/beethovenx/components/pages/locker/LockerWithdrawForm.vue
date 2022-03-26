@@ -12,7 +12,7 @@
           type="submit"
           :loading-label="loading ? 'Loading' : $t('confirming')"
           color="gradient"
-          :disabled="!validInput || amount === '0' || amount === ''"
+          :disabled="totalUnlockedAmount === '' || totalUnlockedAmount === '0'"
           :loading="withdrawing || loading"
           block
           @click="trackGoal(Goals.ClickFarmWithdraw)"
@@ -82,13 +82,9 @@ export default defineComponent({
       propToken: 0
     });
 
-    const {
-      userUnstakedFbeetsBalance,
-      unStake,
-      freshBeetsQuery
-    } = useFreshBeets();
+    const { userUnstakedFbeetsBalance } = useFreshBeets();
 
-    const { totalUnlockedAmount } = useLockerUser();
+    const { lockerUserQuery, totalUnlockedAmount, withdraw } = useLockerUser();
 
     const { txListener } = useEthers();
     const {
@@ -109,22 +105,12 @@ export default defineComponent({
       return userUnstakedFbeetsBalance.value.toString();
     });
 
-    function amountRules() {
-      return isWalletReady.value && bptDeposited.value !== '0'
-        ? [
-            isPositive(),
-            isLessThanOrEqualTo(bptDeposited.value, t('exceedsBalance'))
-          ]
-        : [isPositive()];
-    }
-
     async function submit(): Promise<void> {
       if (!data.withdrawForm.validate()) return;
 
       try {
         withdrawing.value = true;
-        const amountScaled = scale(new BigNumber(amount.value), 18);
-        const tx = await unStake(amountScaled.toString());
+        const tx = await withdraw();
 
         if (!tx) {
           withdrawing.value = false;
@@ -135,7 +121,7 @@ export default defineComponent({
           onTxConfirmed: async () => {
             emit('success', tx);
             amount.value = '';
-            await freshBeetsQuery.refetch.value();
+            await lockerUserQuery.refetch.value();
             withdrawing.value = false;
           },
           onTxFailed: () => {
@@ -171,7 +157,6 @@ export default defineComponent({
       TOKENS,
       // computed
       tokens,
-      amountRules,
       isWalletReady,
       toggleWalletSelectModal,
       isRequired,
