@@ -43,6 +43,6 @@ const lockingPeriods = computed(() =>
   <LockerTable
     :locking-periods="lockingPeriods"
     :is-loading="loading"
-    :no-results-label="$t('poolTransactions.noResults.swaps')"
+    no-results-label="You have no locked or unlocked tokens in your locker."
   />
 </template>

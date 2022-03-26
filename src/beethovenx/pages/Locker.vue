@@ -7,7 +7,7 @@ import { scaleDown } from '@/lib/utils';
 import { BigNumber } from 'bignumber.js';
 import LockerStatSideCard from '@/beethovenx/components/pages/locker/LockerStatSideCard.vue';
 import LockerStatCards from '@/beethovenx/components/pages/locker/LockerStatCards.vue';
-import LockerCurrentLocks from '@/beethovenx/components/pages/locker/LockerCurrentLocks.vue';
+import LockerMyLocks from '@/beethovenx/components/pages/locker/LockerMyLocks.vue';
 import BalTabs from '@/components/_global/BalTabs/BalTabs.vue';
 import useFarmUserQuery from '@/beethovenx/composables/farms/useFarmUserQuery';
 import LockerDepositSteps from '@/beethovenx/components/pages/locker/LockerDepositSteps.vue';
@@ -201,7 +201,7 @@ const activeTab = ref(tabs[0].value);
           :hasStakedFbeets="fbeetsDeposited.gt(0)"
           :loading="dataLoading"
         />
-        <LockerCurrentLocks
+        <LockerMyLocks
           v-if="activeTab === 'my-locker'"
           :loading="dataLoading"
           :locks="data.lockingUser.lockingPeriods"
