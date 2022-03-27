@@ -47,23 +47,16 @@ const {
           :fbeets-apr="0.65"
         />
       </div>
-      <div class="my-5">
-        <div class="h-1 w-full flex-1 bg-gray-700 rounded-3xl" />
-      </div>
+    </BalCard>
+    <BalCard>
       <div class="text-sm text-gray-500 font-medium mb-2">
-        Total Locked
+        Total fBEETS in lockers
       </div>
       <div class="text-xl font-medium truncate flex items-center">
         {{ fNum(totalLockedAmount, 'token-fixed') }} fBEETS
       </div>
-      <div class="my-5">
-        <div class="h-1 w-full flex-1 bg-gray-700 rounded-3xl" />
-      </div>
-      <div class="text-sm text-gray-500 font-medium mb-2">
-        Total Locked Percentage
-      </div>
-      <div class="text-xl font-medium truncate flex items-center">
-        {{ fNum(totalLockedPercentage, 'percent') }}
+      <div class="text-md truncate">
+        ({{ fNum(totalLockedPercentage, 'percent') }} of total fBEETS)
       </div>
     </BalCard>
   </template>

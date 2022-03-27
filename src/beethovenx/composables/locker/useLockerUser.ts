@@ -37,9 +37,11 @@ export function useLockerUser() {
   const lockingUserVotingPower = computed(
     () => data.value?.gqlData.lockingUserVotingPower
   );
-
   const lockedToVotingPowerRatio = computed(
     () => data.value?.gqlData.lockingUser.lockedToVotingPowerRatio
+  );
+  const lockingPeriods = computed(
+    () => data.value?.gqlData.lockingUser.lockingPeriods
   );
 
   const userAllowance = computed(
@@ -154,6 +156,7 @@ export function useLockerUser() {
     lockingUserVotingPower,
     userAllowance,
     lockedToVotingPowerRatio,
+    lockingPeriods,
     refetch,
     lockerUserQuery,
     approve,

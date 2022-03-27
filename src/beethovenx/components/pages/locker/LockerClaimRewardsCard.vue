@@ -10,11 +10,18 @@
       {{ fNum(pendingBeets, 'token_fixed') }} BEETS
     </div>
     <div
-      v-if="hasThirdPartyRewards"
+      v-if="hasBeetsRewards"
       class="text-xl font-medium truncate flex items-center"
     >
-      {{ fNum(pendingRewardToken, 'token_fixed') }} {{ rewardTokenSymbol }}
+      {{ fNum('12.5', 'token_fixed') }} USDC
     </div>
+    <div
+      v-if="hasBeetsRewards"
+      class="text-xl font-medium truncate flex items-center"
+    >
+      {{ fNum('13.8', 'token_fixed') }} FTM
+    </div>
+
     <div class="truncate flex items-center pb-8">
       ({{ fNum(pendingBeetsValue + pendingRewardTokenValue, 'usd') }})
     </div>

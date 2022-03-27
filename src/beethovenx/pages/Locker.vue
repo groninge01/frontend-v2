@@ -5,6 +5,7 @@ import { fNum } from '@/composables/useNumbers';
 import { useFreshBeets } from '@/beethovenx/composables/stake/useFreshBeets';
 import { scaleDown } from '@/lib/utils';
 import { BigNumber } from 'bignumber.js';
+import LockerHeader from '@/beethovenx/components/pages/locker/LockerHeader.vue';
 import LockerStatSideCard from '@/beethovenx/components/pages/locker/LockerStatSideCard.vue';
 import LockerStatCards from '@/beethovenx/components/pages/locker/LockerStatCards.vue';
 import LockerMyLocks from '@/beethovenx/components/pages/locker/LockerMyLocks.vue';
@@ -18,69 +19,7 @@ import { getAddress } from '@ethersproject/address';
 import useFarmUser from '@/beethovenx/composables/farms/useFarmUser';
 import usePoolWithFarm from '@/beethovenx/composables/pool/usePoolWithFarm';
 import BalAlert from '@/components/_global/BalAlert/BalAlert.vue';
-
-// BEGIN DATA
-
-const data = {
-  locker: {
-    totalLockedAmount: '50',
-    totalLockedUsd: '49.98442832648373',
-    totalLockedPercentage: '0.005'
-  },
-  lockingUser: {
-    totalLockedAmount: '50',
-    totalLockedAmountUsd: '49.98442832648373',
-    totalUnlockedAmount: '100.0000000000000005',
-    totalUnlockedAmountUsd: '99.9688566529674605',
-    lockingPeriods: [
-      {
-        lockAmount: '0.0000000000000005',
-        lockAmountUsd: '0.0000000000000004998442832648373',
-        epoch: '1647351600'
-      },
-      {
-        lockAmount: '50',
-        lockAmountUsd: '49.98442832648373',
-        epoch: '1647535200'
-      },
-      {
-        lockAmount: '50',
-        lockAmountUsd: '49.98442832648373',
-        epoch: '1647543600'
-      }
-    ],
-    totalClaimedRewardsUsd: '4967.8557900162216298',
-    claimedRewards: [
-      {
-        amount: '4969.4034285714285708',
-        amountUsd: '4967.8557900162216298',
-        token: '0xa9c0fb44a625c5648bb4df173703682d10b1c68a'
-      }
-    ],
-    totalLostThroughKick: '0.0000000000000005',
-    totalLostThroughKickUsd: '0.0000000000000004998442832648373'
-  },
-  lockingRewardTokens: [
-    {
-      rewardRate: '1.146991428571428571',
-      rewardToken: '0xa9c0fb44a625c5648bb4df173703682d10b1c68a',
-      rewardPeriodFinish: '1647536726',
-      totalRewardAmount: '6345.793142857142857141',
-      totalRewardAmountUsd: '6343.8168504766957303',
-      apr: '723925.93412571428544'
-    }
-  ],
-  lockingPendingRewards: [
-    {
-      amount: '1376.3897142857142852',
-      amountUsd: '1375.9610604604740994',
-      token: '0xa9c0FB44a625c5648Bb4DF173703682d10B1C68a'
-    }
-  ],
-  lockingUserVotingPower: '50'
-};
-
-// END DATA
+import { useLockerUser } from '@/beethovenx/composables/locker/useLockerUser';
 
 const { appNetworkConfig, isLoadingProfile } = useWeb3();
 const {
@@ -95,6 +34,15 @@ const {
   dynamicDataLoading,
   loading: tokensLoading
 } = useTokens();
+const {
+  totalLockedAmount,
+  totalLockedAmountUsd,
+  totalUnlockedAmount,
+  totalUnlockedAmountUsd,
+  lockingUserVotingPower,
+  lockedToVotingPowerRatio,
+  lockingPeriods
+} = useLockerUser();
 
 const { farmUser, farmUserLoading } = useFarmUser(
   appNetworkConfig.fBeets.farmId
@@ -150,6 +98,7 @@ const activeTab = ref(tabs[0].value);
 
 <template>
   <div class="lg:container lg:mx-auto pt-12 md:pt-12">
+    <LockerHeader />
     <div class="flex justify-center">
       <div class="w-full max-w-3xl">
         <BalAlert
@@ -162,7 +111,7 @@ const activeTab = ref(tabs[0].value);
         />
         <BalAlert
           v-if="userBptTokenBalance.eq(0) && userUnstakedFbeetsBalance.gt(0)"
-          title="You have unlocked fBEETS in your wallet"
+          title="You have fBEETS in your wallet"
           description="Lock your fBEETS to earn additional rewards and have voting power."
           type="warning"
           size="md"
@@ -192,7 +141,6 @@ const activeTab = ref(tabs[0].value);
         <LockerRelockSteps
           v-if="activeTab === 'relock'"
           :loading="dataLoading"
-          :locks="data.lockingUser.lockingPeriods"
         />
         <LockerWithdrawSteps
           v-if="activeTab === 'withdraw'"
@@ -204,7 +152,7 @@ const activeTab = ref(tabs[0].value);
         <LockerMyLocks
           v-if="activeTab === 'my-locker'"
           :loading="dataLoading"
-          :locks="data.lockingUser.lockingPeriods"
+          :locks="lockingPeriods"
         />
       </div>
       <div class="w-full lg:max-w-xl mx-auto md:mx-0 lg:ml-6 md:block lg:w-72">
