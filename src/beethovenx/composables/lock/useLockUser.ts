@@ -1,12 +1,8 @@
 import useWeb3 from '@/services/web3/useWeb3';
-import { governanceContractsService } from '@/beethovenx/services/governance/governance-contracts.service';
 import { erc20ContractService } from '@/beethovenx/services/erc20/erc20-contracts.service';
 import useLockUserQuery from '@/beethovenx/composables/lock/useLockUserQuery';
 import { computed } from 'vue';
 import useTransactions from '@/composables/useTransactions';
-import useFarmUser from '@/beethovenx/composables/farms/useFarmUser';
-import usePools from '@/composables/pools/usePools';
-import { DecoratedFarm } from '@/beethovenx/services/subgraph/subgraph-types';
 import BigNumber from 'bignumber.js';
 import { lockContractsService } from '@/beethovenx/services/lock/lock-contracts.service';
 
@@ -15,7 +11,7 @@ function bn(num: number | string) {
 }
 
 export function useLockUser() {
-  const { getProvider, appNetworkConfig, account } = useWeb3();
+  const { getProvider } = useWeb3();
   const { addTransaction } = useTransactions();
   const lockUserQuery = useLockUserQuery();
   const { isLoading, data, refetch } = lockUserQuery;
