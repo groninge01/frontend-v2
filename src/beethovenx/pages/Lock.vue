@@ -13,7 +13,6 @@ import BalTabs from '@/components/_global/BalTabs/BalTabs.vue';
 import useFarmUserQuery from '@/beethovenx/composables/farms/useFarmUserQuery';
 import LockDepositSteps from '@/beethovenx/components/pages/lock/LockDepositSteps.vue';
 import LockWithdrawSteps from '@/beethovenx/components/pages/lock/LockWithdrawSteps.vue';
-import LockRelockSteps from '@/beethovenx/components/pages/lock/LockRelockSteps.vue';
 import useTokens from '@/composables/useTokens';
 import { getAddress } from '@ethersproject/address';
 import useFarmUser from '@/beethovenx/composables/farms/useFarmUser';
@@ -88,9 +87,8 @@ const dataLoading = computed(
 
 const tabs = [
   { value: 'lock', label: 'Lock' },
-  { value: 'relock', label: 'Relock' },
   { value: 'withdraw', label: 'Withdraw' },
-  { value: 'my-lock', label: 'My Lock' }
+  { value: 'my-locks', label: 'My Locks' }
 ];
 
 const activeTab = ref(tabs[0].value);
@@ -138,7 +136,6 @@ const activeTab = ref(tabs[0].value);
           :hasStakedFbeets="fbeetsDeposited.gt(0)"
           :loading="dataLoading"
         />
-        <LockRelockSteps v-if="activeTab === 'relock'" :loading="dataLoading" />
         <LockWithdrawSteps
           v-if="activeTab === 'withdraw'"
           :hasBpt="hasBpt"
@@ -147,7 +144,7 @@ const activeTab = ref(tabs[0].value);
           :loading="dataLoading"
         />
         <LockMyLocks
-          v-if="activeTab === 'my-lock'"
+          v-if="activeTab === 'my-locks'"
           :loading="dataLoading"
           :locks="lockingPeriods"
         />
