@@ -1,8 +1,6 @@
 import Service from '@/services/balancer/contracts/balancer-contracts.service';
 import ConfigService from '@/services/config/config.service';
-import { call, Multicaller } from '@/lib/utils/balancer/contract';
 import { default as LockAbi } from '@/beethovenx/abi/FBeetsLocker.json';
-import { default as ERC20Abi } from '@/lib/abi/ERC20.json';
 import { BigNumber } from 'ethers';
 import { sendTransaction } from '@/lib/utils/balancer/web3';
 import { Web3Provider } from '@ethersproject/providers';
@@ -50,16 +48,6 @@ export default class Lock {
       []
     );
   }
-
-  // public async leave(provider: Web3Provider, amount: string) {
-  //   return sendTransaction(
-  //     provider,
-  //     this.fbeetsAddress,
-  //     LockAbi,
-  //     'leave',
-  //     [BigNumber.from(amount)]
-  //   );
-  // }
 
   public get fbeetsAddress(): string {
     return this.service.config.fBeets.address || '';
