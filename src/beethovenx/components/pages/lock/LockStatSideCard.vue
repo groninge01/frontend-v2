@@ -6,15 +6,6 @@ import BalLoadingBlock from '@/components/_global/BalLoadingBlock/BalLoadingBloc
 import numeral from 'numeral';
 import LockAprTooltip from '@/beethovenx/components/pages/lock/LockAprTooltip.vue';
 
-type Props = {
-  loading: boolean;
-  fBeetsBalance: string;
-  bptBalance: string;
-  beetsBalance: string;
-};
-
-const props = defineProps<Props>();
-
 const { fNum } = useNumbers();
 
 const {
@@ -32,6 +23,7 @@ const {
 
 <template>
   <template v-if="lockDataLoading">
+    <BalLoadingBlock class="h-24 mb-4" />
     <BalLoadingBlock class="h-24" />
   </template>
   <template v-else>

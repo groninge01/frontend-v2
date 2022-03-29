@@ -9,7 +9,7 @@ import {
 } from '@/beethovenx/services/beethovenx/beethovenx-types';
 
 interface QueryResponse {
-  lock: GqlLock;
+  locker: GqlLock;
   lockingRewardTokens: GqlRewardToken[];
 }
 

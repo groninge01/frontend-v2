@@ -20,13 +20,16 @@ export function useLock() {
 
   const lockDataLoading = computed(() => isLoading.value);
 
-  const totalLockedAmount = computed(() => data.value?.lock.totalLockedAmount);
-  const totalLockedUsd = computed(() => data.value?.lock.totalLockedUsd);
+  const totalLockedAmount = computed(() => {
+    console.log(data.value);
+    return data.value?.locker.totalLockedAmount;
+  });
+  const totalLockedUsd = computed(() => data.value?.locker.totalLockedUsd);
   const totalLockedPercentage = computed(
-    () => data.value?.lock.totalLockedPercentage
+    () => data.value?.locker.totalLockedPercentage
   );
-  const timestamp = computed(() => data.value?.lock.timestamp);
-  const block = computed(() => data.value?.lock.block);
+  const timestamp = computed(() => data.value?.locker.timestamp);
+  const block = computed(() => data.value?.locker.block);
 
   const totalApr = computed(() => {
     const tokens = data.value?.lockingRewardTokens;

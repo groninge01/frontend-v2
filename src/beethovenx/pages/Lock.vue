@@ -150,12 +150,7 @@ const activeTab = ref(tabs[0].value);
         />
       </div>
       <div class="w-full lg:max-w-xl mx-auto md:mx-0 lg:ml-6 md:block lg:w-72">
-        <LockStatSideCard
-          :loading="dataLoading"
-          :f-beets-balance="userFbeetsBalance"
-          :bpt-balance="bptBalance"
-          :beets-balance="beetsBalance"
-        />
+        <LockStatSideCard />
       </div>
     </div>
   </div>
