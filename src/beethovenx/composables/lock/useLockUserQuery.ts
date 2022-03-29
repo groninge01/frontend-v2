@@ -15,14 +15,14 @@ interface QueryResponse {
   };
 }
 
-export default function useLockerUserQuery() {
+export default function useLockUserQuery() {
   const { appLoading } = useApp();
   const { isWalletReady, account } = useWeb3();
-  const queryKey = reactive(QUERY_KEYS.Locker.User(account));
+  const queryKey = reactive(QUERY_KEYS.Lock.User(account));
   const enabled = computed(() => !appLoading.value && isWalletReady.value);
 
   const queryFn = async () => {
-    const gqlData = await beethovenxService.getLockerUserData(account.value);
+    const gqlData = await beethovenxService.getLockUserData(account.value);
     const fBeetsData = await governanceContractsService.fbeets.getData(
       account.value
     );

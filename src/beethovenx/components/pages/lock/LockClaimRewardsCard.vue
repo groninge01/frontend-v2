@@ -32,7 +32,7 @@
         color="gradient"
         :disabled="pendingBeets <= 0 && pendingRewardToken <= 0"
         :loading="gettingReward"
-        @click.prevent="getLockerReward"
+        @click.prevent="getLockReward"
       />
     </template>
   </BalCard>
@@ -43,7 +43,7 @@ import { defineComponent, ref } from 'vue';
 import useNumbers from '@/composables/useNumbers';
 import useEthers from '@/composables/useEthers';
 import useFarmUser from '@/beethovenx/composables/farms/useFarmUser';
-import { useLockerUser } from '@/beethovenx/composables/locker/useLockerUser';
+import { useLockUser } from '@/beethovenx/composables/lock/useLockUser';
 
 export default defineComponent({
   name: 'FarmHarvestRewardsCard',
@@ -91,11 +91,11 @@ export default defineComponent({
   setup(props) {
     const { fNum } = useNumbers();
     const { txListener } = useEthers();
-    const { getReward } = useLockerUser();
+    const { getReward } = useLockUser();
     const gettingReward = ref(false);
     const { farmUserRefetch } = useFarmUser(props.farmId);
 
-    async function getLockerReward(): Promise<void> {
+    async function getLockReward(): Promise<void> {
       gettingReward.value = true;
       const tx = await getReward();
 
@@ -117,7 +117,7 @@ export default defineComponent({
 
     return {
       fNum,
-      getLockerReward,
+      getLockReward,
       gettingReward
     };
   }

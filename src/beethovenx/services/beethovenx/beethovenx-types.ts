@@ -415,8 +415,8 @@ export interface GqlSorSwapRouteHop {
 
 export type GqlSorSwapType = 'EXACT_IN' | 'EXACT_OUT';
 
-export interface GqlLocker {
-  __typename?: 'GqlLocker';
+export interface GqlLock {
+  __typename?: 'GqlLock';
   totalLockedPercentage: Scalars['BigDecimal'];
   totalLockedAmount: Scalars['BigDecimal'];
   totalLockedUsd: Scalars['BigDecimal'];

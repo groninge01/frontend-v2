@@ -1,7 +1,7 @@
 import useWeb3 from '@/services/web3/useWeb3';
-import { lockerContractsService } from '@/beethovenx/services/locker/locker-contracts.service';
+import { lockerContractsService } from '@/beethovenx/services/lock/lock-contracts.service';
 import { erc20ContractService } from '@/beethovenx/services/erc20/erc20-contracts.service';
-import useLockerQuery from '@/beethovenx/composables/locker/useLockerQuery';
+import useLockQuery from '@/beethovenx/composables/lock/useLockQuery';
 import { computed } from 'vue';
 import useTransactions from '@/composables/useTransactions';
 import useFarmUser from '@/beethovenx/composables/farms/useFarmUser';
@@ -14,8 +14,8 @@ function bn(num: number | string) {
   return new BigNumber(num);
 }
 
-export function useLocker() {
-  const lockerQuery = useLockerQuery();
+export function useLock() {
+  const lockerQuery = useLockQuery();
   const { isLoading, data } = lockerQuery;
 
   const lockerDataLoading = computed(() => isLoading.value);

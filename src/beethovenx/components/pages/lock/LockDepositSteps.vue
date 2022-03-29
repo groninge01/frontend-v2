@@ -3,7 +3,7 @@ import useWeb3 from '@/services/web3/useWeb3';
 import StepContainer from '@/beethovenx/components/containers/StepContainer.vue';
 import BalBtn from '@/components/_global/BalBtn/BalBtn.vue';
 import FreshBeetsDepositForm from '@/beethovenx/components/pages/fbeets/FreshBeetsDepositForm.vue';
-import LockerDepositForm from '@/beethovenx/components/pages/locker/LockerDepositForm.vue';
+import LockDepositForm from '@/beethovenx/components/pages/lock/LockDepositForm.vue';
 import { useFreshBeets } from '@/beethovenx/composables/stake/useFreshBeets';
 import useFarmUserQuery from '@/beethovenx/composables/farms/useFarmUserQuery';
 
@@ -60,7 +60,7 @@ function handleFarmDeposit(txReceipt): void {
     :complete="props.hasStakedFbeets"
   >
     <template v-slot:content>
-      <LockerDepositForm
+      <LockDepositForm
         :farm-id="appNetworkConfig.fBeets.farmId"
         :token-address="appNetworkConfig.fBeets.address"
         token-name="fBEETS"

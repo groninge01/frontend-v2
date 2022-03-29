@@ -52,7 +52,7 @@ import useEthers from '@/composables/useEthers';
 import { useFreshBeets } from '@/beethovenx/composables/stake/useFreshBeets';
 import BalLoadingBlock from '@/components/_global/BalLoadingBlock/BalLoadingBlock.vue';
 import useFarmUser from '@/beethovenx/composables/farms/useFarmUser';
-import { useLockerUser } from '@/beethovenx/composables/locker/useLockerUser';
+import { useLockUser } from '@/beethovenx/composables/lock/useLockUser';
 
 type DataProps = {
   withdrawForm: FormRef;
@@ -62,7 +62,7 @@ type DataProps = {
   propToken: number;
 };
 export default defineComponent({
-  name: 'LockerWithdrawForm',
+  name: 'LockWithdrawForm',
   components: {},
   emits: ['success'],
 
@@ -84,7 +84,7 @@ export default defineComponent({
 
     const { userUnstakedFbeetsBalance } = useFreshBeets();
 
-    const { lockerUserQuery, totalUnlockedAmount, withdraw } = useLockerUser();
+    const { lockerUserQuery, totalUnlockedAmount, withdraw } = useLockUser();
 
     const { txListener } = useEthers();
     const {

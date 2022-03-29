@@ -17,7 +17,7 @@ import useWeb3 from '@/services/web3/useWeb3';
 /**
  * TYPES
  */
-type LockerRow = {
+type LockRow = {
   locked: boolean;
   lockAmount: string;
   lockAmountUsd: string;
@@ -53,7 +53,7 @@ const { explorerLinks } = useWeb3();
 /**
  * COMPUTED
  */
-const columns = computed<ColumnDefinition<LockerRow>[]>(() => [
+const columns = computed<ColumnDefinition<LockRow>[]>(() => [
   {
     name: t('amount'),
     id: 'amount',
@@ -86,7 +86,7 @@ const columns = computed<ColumnDefinition<LockerRow>[]>(() => [
 
 const twelveWeeksInSeconds = 12 * 7 * 24 * 60 * 60 * 1000;
 
-const lockPeriodRows = computed<LockerRow[]>(() =>
+const lockPeriodRows = computed<LockRow[]>(() =>
   props.isLoading
     ? []
     : props.lockingPeriods.map(({ lockAmount, lockAmountUsd, epoch }) => {

@@ -2,24 +2,22 @@ import { computed, reactive } from 'vue';
 import { useQuery } from 'vue-query';
 import QUERY_KEYS from '@/beethovenx/constants/queryKeys';
 import useApp from '@/composables/useApp';
+import useWeb3 from '@/services/web3/useWeb3';
 import { beethovenxService } from '@/beethovenx/services/beethovenx/beethovenx.service';
-import {
-  GqlLocker,
-  GqlRewardToken
-} from '@/beethovenx/services/beethovenx/beethovenx-types';
+import { GqlLockingReward } from '@/beethovenx/services/beethovenx/beethovenx-types';
 
 interface QueryResponse {
-  locker: GqlLocker;
-  lockingRewardTokens: GqlRewardToken[];
+  lockingPendingRewards: GqlLockingReward[];
 }
 
-export default function useLockerQuery() {
+export default function useLockQuery() {
   const { appLoading } = useApp();
-  const queryKey = reactive(QUERY_KEYS.Locker.all);
-  const enabled = computed(() => !appLoading.value);
+  const { account, isWalletReady } = useWeb3();
+  const enabled = computed(() => !appLoading.value && isWalletReady.value);
+  const queryKey = reactive(QUERY_KEYS.Lock.Rewards(account));
 
   const queryFn = async () => {
-    const data = await beethovenxService.getLockerData();
+    const data = await beethovenxService.getLockRewardsData(account.value);
     return data;
   };
 

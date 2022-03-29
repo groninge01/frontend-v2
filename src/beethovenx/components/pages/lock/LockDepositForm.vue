@@ -97,7 +97,7 @@ import useWeb3 from '@/services/web3/useWeb3';
 import useEthers from '@/composables/useEthers';
 import BigNumber from 'bignumber.js';
 import { useFreshBeets } from '@/beethovenx/composables/stake/useFreshBeets';
-import { useLockerUser } from '@/beethovenx/composables/locker/useLockerUser';
+import { useLockUser } from '@/beethovenx/composables/lock/useLockUser';
 import useAllowanceAvailableQuery from '@/beethovenx/composables/farms/useAllowanceAvailableQuery';
 import { governanceContractsService } from '@/beethovenx/services/governance/governance-contracts.service';
 import useTokens from '@/composables/useTokens';
@@ -112,7 +112,7 @@ type DataProps = {
 };
 
 export default defineComponent({
-  name: 'LockerDepositForm',
+  name: 'LockDepositForm',
 
   components: {},
 
@@ -143,7 +143,7 @@ export default defineComponent({
     const { fNum } = useNumbers();
     const { t } = useI18n();
     const { userUnstakedFbeetsBalance, freshBeetsQuery } = useFreshBeets();
-    const { userAllowance, refetch, approve, lock } = useLockerUser();
+    const { userAllowance, refetch, approve, lock } = useLockUser();
 
     const { farmUserRefetch } = useFarmUser(appNetworkConfig.fBeets.farmId);
     const { refetchAllowances } = useTokens();

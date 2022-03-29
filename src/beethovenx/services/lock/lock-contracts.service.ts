@@ -2,13 +2,13 @@ import { Config } from '@/lib/config';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { configService as _configService } from '@/services/config/config.service';
 import { rpcProviderService as _rpcProviderService } from '@/services/rpc-provider/rpc-provider.service';
-import Locker from '@/beethovenx/services/locker/contracts/locker';
-import { default as LockerAbi } from '@/beethovenx/abi/FBeetsLocker.json';
+import Lock from '@/beethovenx/services/lock/contracts/lock';
+import { default as LockAbi } from '@/beethovenx/abi/FBeetsLocker.json';
 
-export default class LockerContractsService {
+export default class LockContractsService {
   config: Config;
   provider: JsonRpcProvider;
-  locker: Locker;
+  locker: Lock;
 
   constructor(
     readonly configService = _configService,
@@ -18,15 +18,15 @@ export default class LockerContractsService {
     this.config = this.configService.network;
 
     // Init contracts
-    this.locker = new Locker(this);
+    this.locker = new Lock(this);
   }
 
   // Combine all the ABIs and remove duplicates
   public get allABIs() {
     return Object.values(
-      Object.fromEntries([...LockerAbi].map(row => [row.name, row]))
+      Object.fromEntries([...LockAbi].map(row => [row.name, row]))
     );
   }
 }
 
-export const lockerContractsService = new LockerContractsService();
+export const lockerContractsService = new LockContractsService();

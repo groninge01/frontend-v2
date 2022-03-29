@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import BalCard from '@/components/_global/BalCard/BalCard.vue';
-import { useLocker } from '@/beethovenx/composables/locker/useLocker';
+import { useLock } from '@/beethovenx/composables/lock/useLock';
 import useNumbers from '@/composables/useNumbers';
 import BalLoadingBlock from '@/components/_global/BalLoadingBlock/BalLoadingBlock.vue';
 import numeral from 'numeral';
-import LockerAprTooltip from '@/beethovenx/components/pages/locker/LockerAprTooltip.vue';
+import LockAprTooltip from '@/beethovenx/components/pages/lock/LockAprTooltip.vue';
 
 type Props = {
   loading: boolean;
@@ -23,7 +23,7 @@ const {
   totalLockedUsd,
   totalLockedPercentage,
   totalApr
-} = useLocker();
+} = useLock();
 
 /**
  * STATE
@@ -41,7 +41,7 @@ const {
       </div>
       <div class="text-xl font-medium truncate flex items-center">
         {{ fNum(totalApr, 'percent') }}
-        <LockerAprTooltip
+        <LockAprTooltip
           :swap-apr="0.026"
           :farm-apr="0.045"
           :fbeets-apr="0.65"

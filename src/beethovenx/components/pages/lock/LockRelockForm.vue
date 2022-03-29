@@ -36,7 +36,7 @@ import useTokens from '@/composables/useTokens';
 import { BigNumber } from 'bignumber.js';
 import useEthers from '@/composables/useEthers';
 import BalLoadingBlock from '@/components/_global/BalLoadingBlock/BalLoadingBlock.vue';
-import { useLockerUser } from '@/beethovenx/composables/locker/useLockerUser';
+import { useLockUser } from '@/beethovenx/composables/lock/useLockUser';
 
 type DataProps = {
   relockForm: FormRef;
@@ -45,7 +45,7 @@ type DataProps = {
   propToken: number;
 };
 export default defineComponent({
-  name: 'LockerRelockForm',
+  name: 'LockRelockForm',
   components: {},
   emits: ['success'],
 
@@ -64,7 +64,7 @@ export default defineComponent({
       propToken: 0
     });
 
-    const { lockerUserQuery, totalUnlockedAmount, relock } = useLockerUser();
+    const { lockerUserQuery, totalUnlockedAmount, relock } = useLockUser();
 
     const { txListener } = useEthers();
     const {

@@ -1,23 +1,23 @@
 import useWeb3 from '@/services/web3/useWeb3';
 import { governanceContractsService } from '@/beethovenx/services/governance/governance-contracts.service';
 import { erc20ContractService } from '@/beethovenx/services/erc20/erc20-contracts.service';
-import useLockerUserQuery from '@/beethovenx/composables/locker/useLockerUserQuery';
+import useLockUserQuery from '@/beethovenx/composables/lock/useLockUserQuery';
 import { computed } from 'vue';
 import useTransactions from '@/composables/useTransactions';
 import useFarmUser from '@/beethovenx/composables/farms/useFarmUser';
 import usePools from '@/composables/pools/usePools';
 import { DecoratedFarm } from '@/beethovenx/services/subgraph/subgraph-types';
 import BigNumber from 'bignumber.js';
-import { lockerContractsService } from '@/beethovenx/services/locker/locker-contracts.service';
+import { lockerContractsService } from '@/beethovenx/services/lock/lock-contracts.service';
 
 function bn(num: number | string) {
   return new BigNumber(num);
 }
 
-export function useLockerUser() {
+export function useLockUser() {
   const { getProvider, appNetworkConfig, account } = useWeb3();
   const { addTransaction } = useTransactions();
-  const lockerUserQuery = useLockerUserQuery();
+  const lockerUserQuery = useLockUserQuery();
   const { isLoading, data, refetch } = lockerUserQuery;
 
   const lockerUserDataLoading = computed(() => isLoading.value);

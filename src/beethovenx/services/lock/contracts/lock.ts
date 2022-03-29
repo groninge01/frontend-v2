@@ -1,13 +1,13 @@
 import Service from '@/services/balancer/contracts/balancer-contracts.service';
 import ConfigService from '@/services/config/config.service';
 import { call, Multicaller } from '@/lib/utils/balancer/contract';
-import { default as LockerAbi } from '@/beethovenx/abi/FBeetsLocker.json';
+import { default as LockAbi } from '@/beethovenx/abi/FBeetsLocker.json';
 import { default as ERC20Abi } from '@/lib/abi/ERC20.json';
 import { BigNumber } from 'ethers';
 import { sendTransaction } from '@/lib/utils/balancer/web3';
 import { Web3Provider } from '@ethersproject/providers';
 
-export default class Locker {
+export default class Lock {
   service: Service;
 
   constructor(service, private readonly configService = new ConfigService()) {
@@ -15,7 +15,7 @@ export default class Locker {
   }
 
   public async lock(provider: Web3Provider, amount: string, account: string) {
-    return sendTransaction(provider, this.lockerAddress, LockerAbi, 'lock', [
+    return sendTransaction(provider, this.lockerAddress, LockAbi, 'lock', [
       account,
       BigNumber.from(amount)
     ]);
@@ -25,7 +25,7 @@ export default class Locker {
     return sendTransaction(
       provider,
       this.lockerAddress,
-      LockerAbi,
+      LockAbi,
       'processExpiredLocks',
       [true]
     );
@@ -35,7 +35,7 @@ export default class Locker {
     return sendTransaction(
       provider,
       this.lockerAddress,
-      LockerAbi,
+      LockAbi,
       'processExpiredLocks',
       [false]
     );
@@ -45,7 +45,7 @@ export default class Locker {
     return sendTransaction(
       provider,
       this.lockerAddress,
-      LockerAbi,
+      LockAbi,
       'getReward',
       []
     );
@@ -55,7 +55,7 @@ export default class Locker {
   //   return sendTransaction(
   //     provider,
   //     this.fbeetsAddress,
-  //     LockerAbi,
+  //     LockAbi,
   //     'leave',
   //     [BigNumber.from(amount)]
   //   );

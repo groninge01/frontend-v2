@@ -123,7 +123,7 @@ const QUERY_KEYS = {
   FBeets: {
     all: ['FBeets', 'all']
   },
-  Locker: {
+  Lock: {
     all: [LOCKER_ROOT_KEY, 'all'],
     Rewards: (account: Ref<string>) => [
       LOCKER_ROOT_KEY,

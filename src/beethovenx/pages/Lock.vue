@@ -5,21 +5,21 @@ import { fNum } from '@/composables/useNumbers';
 import { useFreshBeets } from '@/beethovenx/composables/stake/useFreshBeets';
 import { scaleDown } from '@/lib/utils';
 import { BigNumber } from 'bignumber.js';
-import LockerHeader from '@/beethovenx/components/pages/locker/LockerHeader.vue';
-import LockerStatSideCard from '@/beethovenx/components/pages/locker/LockerStatSideCard.vue';
-import LockerStatCards from '@/beethovenx/components/pages/locker/LockerStatCards.vue';
-import LockerMyLocks from '@/beethovenx/components/pages/locker/LockerMyLocks.vue';
+import LockHeader from '@/beethovenx/components/pages/lock/LockHeader.vue';
+import LockStatSideCard from '@/beethovenx/components/pages/lock/LockStatSideCard.vue';
+import LockStatCards from '@/beethovenx/components/pages/lock/LockStatCards.vue';
+import LockMyLocks from '@/beethovenx/components/pages/lock/LockMyLocks.vue';
 import BalTabs from '@/components/_global/BalTabs/BalTabs.vue';
 import useFarmUserQuery from '@/beethovenx/composables/farms/useFarmUserQuery';
-import LockerDepositSteps from '@/beethovenx/components/pages/locker/LockerDepositSteps.vue';
-import LockerWithdrawSteps from '@/beethovenx/components/pages/locker/LockerWithdrawSteps.vue';
-import LockerRelockSteps from '@/beethovenx/components/pages/locker/LockerRelockSteps.vue';
+import LockDepositSteps from '@/beethovenx/components/pages/lock/LockDepositSteps.vue';
+import LockWithdrawSteps from '@/beethovenx/components/pages/lock/LockWithdrawSteps.vue';
+import LockRelockSteps from '@/beethovenx/components/pages/lock/LockRelockSteps.vue';
 import useTokens from '@/composables/useTokens';
 import { getAddress } from '@ethersproject/address';
 import useFarmUser from '@/beethovenx/composables/farms/useFarmUser';
 import usePoolWithFarm from '@/beethovenx/composables/pool/usePoolWithFarm';
 import BalAlert from '@/components/_global/BalAlert/BalAlert.vue';
-import { useLockerUser } from '@/beethovenx/composables/locker/useLockerUser';
+import { useLockUser } from '@/beethovenx/composables/lock/useLockUser';
 
 const { appNetworkConfig, isLoadingProfile } = useWeb3();
 const {
@@ -42,7 +42,7 @@ const {
   lockingUserVotingPower,
   lockedToVotingPowerRatio,
   lockingPeriods
-} = useLockerUser();
+} = useLockUser();
 
 const { farmUser, farmUserLoading } = useFarmUser(
   appNetworkConfig.fBeets.farmId
@@ -90,7 +90,7 @@ const tabs = [
   { value: 'lock', label: 'Lock' },
   { value: 'relock', label: 'Relock' },
   { value: 'withdraw', label: 'Withdraw' },
-  { value: 'my-locker', label: 'My Locker' }
+  { value: 'my-locker', label: 'My Lock' }
 ];
 
 const activeTab = ref(tabs[0].value);
@@ -98,7 +98,7 @@ const activeTab = ref(tabs[0].value);
 
 <template>
   <div class="lg:container lg:mx-auto pt-12 md:pt-12">
-    <LockerHeader />
+    <LockHeader />
     <div class="flex justify-center">
       <div class="w-full max-w-3xl">
         <BalAlert
@@ -126,37 +126,34 @@ const activeTab = ref(tabs[0].value);
     <div class="lg:flex justify-center mb-8">
       <div class="w-full lg:max-w-3xl">
         <div class="mb-6">
-          <LockerStatCards />
+          <LockStatCards />
         </div>
         <div class="mb-4">
           <BalTabs v-model="activeTab" :tabs="tabs" no-pad class="-mb-px" />
         </div>
-        <LockerDepositSteps
+        <LockDepositSteps
           v-if="activeTab === 'lock'"
           :hasBpt="hasBpt"
           :hasUnstakedFbeets="hasUnstakedFbeets"
           :hasStakedFbeets="fbeetsDeposited.gt(0)"
           :loading="dataLoading"
         />
-        <LockerRelockSteps
-          v-if="activeTab === 'relock'"
-          :loading="dataLoading"
-        />
-        <LockerWithdrawSteps
+        <LockRelockSteps v-if="activeTab === 'relock'" :loading="dataLoading" />
+        <LockWithdrawSteps
           v-if="activeTab === 'withdraw'"
           :hasBpt="hasBpt"
           :hasUnstakedFbeets="hasUnstakedFbeets"
           :hasStakedFbeets="fbeetsDeposited.gt(0)"
           :loading="dataLoading"
         />
-        <LockerMyLocks
+        <LockMyLocks
           v-if="activeTab === 'my-locker'"
           :loading="dataLoading"
           :locks="lockingPeriods"
         />
       </div>
       <div class="w-full lg:max-w-xl mx-auto md:mx-0 lg:ml-6 md:block lg:w-72">
-        <LockerStatSideCard
+        <LockStatSideCard
           :loading="dataLoading"
           :f-beets-balance="userFbeetsBalance"
           :bpt-balance="bptBalance"

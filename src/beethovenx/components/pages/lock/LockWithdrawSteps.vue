@@ -2,10 +2,10 @@
 import useWeb3 from '@/services/web3/useWeb3';
 import StepContainer from '@/beethovenx/components/containers/StepContainer.vue';
 import BalBtn from '@/components/_global/BalBtn/BalBtn.vue';
-import LockerRelockForm from '@/beethovenx/components/pages/locker/LockerRelockForm.vue';
+import LockWithdrawForm from '@/beethovenx/components/pages/lock/LockWithdrawForm.vue';
+import FreshBeetsWithdrawForm from '@/beethovenx/components/pages/fbeets/FreshBeetsWithdrawForm.vue';
 import { useFreshBeets } from '@/beethovenx/composables/stake/useFreshBeets';
 import useFarmUserQuery from '@/beethovenx/composables/farms/useFarmUserQuery';
-import { useLockerUser } from '@/beethovenx/composables/locker/useLockerUser';
 
 type Props = {
   hasBpt: boolean;
@@ -19,7 +19,6 @@ const props = defineProps<Props>();
 const { appNetworkConfig } = useWeb3();
 const { freshBeetsQuery } = useFreshBeets();
 const farmUserQuery = useFarmUserQuery(appNetworkConfig.fBeets.farmId);
-const { totalUnlockedAmount } = useLockerUser();
 
 function handleFarmWithdrawal(txReceipt): void {
   freshBeetsQuery.refetch.value();
@@ -30,16 +29,42 @@ function handleFarmWithdrawal(txReceipt): void {
 <template>
   <StepContainer
     :step-number="1"
-    title="Relock ALL your unlocked fBEETS back into the fBEETS locker"
-    :complete="totalUnlockedAmount === '' || totalUnlockedAmount === '0'"
+    title="Withdraw ALL your unlocked fBEETS from the fBEETS locker"
+    :complete="false"
   >
     <template v-slot:content>
-      <LockerRelockForm
+      <LockWithdrawForm
         :farm-id="appNetworkConfig.fBeets.farmId"
         :token-address="appNetworkConfig.fBeets.address"
         token-name="fBEETS"
         @success="handleFarmWithdrawal($event)"
         :data-loading="props.loading"
+      />
+    </template>
+  </StepContainer>
+  <StepContainer
+    :step-number="2"
+    title="Burn your fBEETS to receive Fidelio Duetto BPTs"
+    :complete="props.hasBpt"
+  >
+    <template v-slot:content>
+      <FreshBeetsWithdrawForm :loading="props.loading" />
+    </template>
+  </StepContainer>
+  <StepContainer
+    :step-number="3"
+    title="Withdraw your BEETS and/or FTM from the Fidelio Duetto pool"
+    :complete="false"
+  >
+    <template v-slot:right>
+      <BalBtn
+        class="w-40"
+        tag="router-link"
+        :to="{
+          name: 'withdraw',
+          params: { id: appNetworkConfig.fBeets.poolId }
+        }"
+        label="Withdraw"
       />
     </template>
   </StepContainer>

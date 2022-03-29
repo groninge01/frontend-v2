@@ -13,7 +13,7 @@ import {
   GqlLgeCreateInput,
   GqlSorGetSwapsInput,
   GqlSorGetSwapsResponse,
-  GqlLocker,
+  GqlLock,
   GqlTokenPrice,
   GqlUserPortfolioData,
   GqlUserTokenData,
@@ -597,8 +597,8 @@ export default class BeethovenxService {
     };
   }
 
-  public async getLockerData(): Promise<{
-    locker: GqlLocker;
+  public async getLockData(): Promise<{
+    locker: GqlLock;
     lockingRewardTokens: GqlRewardToken[];
   }> {
     const query = jsonToGraphQLQuery({
@@ -622,14 +622,14 @@ export default class BeethovenxService {
     });
 
     const data = await this.get<{
-      locker: GqlLocker;
+      locker: GqlLock;
       lockingRewardTokens: GqlRewardToken[];
     }>(query);
 
     return data;
   }
 
-  public async getLockerUserData(
+  public async getLockUserData(
     account: string
   ): Promise<{
     lockingUser: GqlLockingUser;
@@ -671,7 +671,7 @@ export default class BeethovenxService {
     return data;
   }
 
-  public async getLockerRewardsData(
+  public async getLockRewardsData(
     account: string
   ): Promise<{ lockingPendingRewards: GqlLockingReward[] }> {
     const query = jsonToGraphQLQuery({

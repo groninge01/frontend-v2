@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import useWeb3 from '@/services/web3/useWeb3';
 import useFarmUserQuery from '@/beethovenx/composables/farms/useFarmUserQuery';
-import LockerTable from './LockerTable.vue';
+import LockTable from './LockTable.vue';
 import { flatten } from 'lodash';
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 const props = defineProps<Props>();
 
 const { appNetworkConfig } = useWeb3();
-import useLockerUserQuery from '@/beethovenx/composables/locker/useLockerUserQuery';
+import useLockUserQuery from '@/beethovenx/composables/lock/useLockUserQuery';
 import { computed } from 'vue';
 
 function epochToDate(epoch): Date {
@@ -25,7 +25,7 @@ function epochToDate(epoch): Date {
 /**
  * QUERIES
  */
-const lockerUserQuery = useLockerUserQuery();
+const lockerUserQuery = useLockUserQuery();
 
 /**
  * COMPUTED
@@ -40,7 +40,7 @@ const lockingPeriods = computed(() =>
 </script>
 
 <template>
-  <LockerTable
+  <LockTable
     :locking-periods="lockingPeriods"
     :is-loading="loading"
     no-results-label="You have no locked or unlocked tokens in your locker."
