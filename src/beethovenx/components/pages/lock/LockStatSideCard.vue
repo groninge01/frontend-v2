@@ -18,7 +18,7 @@ const props = defineProps<Props>();
 const { fNum } = useNumbers();
 
 const {
-  lockerDataLoading,
+  lockDataLoading,
   totalLockedAmount,
   totalLockedUsd,
   totalLockedPercentage,
@@ -31,7 +31,7 @@ const {
 </script>
 
 <template>
-  <template v-if="lockerDataLoading">
+  <template v-if="lockDataLoading">
     <BalLoadingBlock class="h-24" />
   </template>
   <template v-else>

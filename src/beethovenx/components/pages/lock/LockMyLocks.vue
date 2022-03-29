@@ -25,14 +25,14 @@ function epochToDate(epoch): Date {
 /**
  * QUERIES
  */
-const lockerUserQuery = useLockUserQuery();
+const lockUserQuery = useLockUserQuery();
 
 /**
  * COMPUTED
  */
 const lockingPeriods = computed(() =>
-  lockerUserQuery.data.value
-    ? lockerUserQuery.data.value.gqlData.lockingUser.lockingPeriods.filter(
+  lockUserQuery.data.value
+    ? lockUserQuery.data.value.gqlData.lockingUser.lockingPeriods.filter(
         period => !period.withdrawn
       )
     : []

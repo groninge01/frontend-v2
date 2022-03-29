@@ -8,7 +8,7 @@ import { default as LockAbi } from '@/beethovenx/abi/FBeetsLocker.json';
 export default class LockContractsService {
   config: Config;
   provider: JsonRpcProvider;
-  locker: Lock;
+  lock: Lock;
 
   constructor(
     readonly configService = _configService,
@@ -18,7 +18,7 @@ export default class LockContractsService {
     this.config = this.configService.network;
 
     // Init contracts
-    this.locker = new Lock(this);
+    this.lock = new Lock(this);
   }
 
   // Combine all the ABIs and remove duplicates
@@ -29,4 +29,4 @@ export default class LockContractsService {
   }
 }
 
-export const lockerContractsService = new LockContractsService();
+export const lockContractsService = new LockContractsService();

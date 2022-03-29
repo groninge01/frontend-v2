@@ -64,7 +64,7 @@ export default defineComponent({
       propToken: 0
     });
 
-    const { lockerUserQuery, totalUnlockedAmount, relock } = useLockUser();
+    const { lockUserQuery, totalUnlockedAmount, relock } = useLockUser();
 
     const { txListener } = useEthers();
     const {
@@ -93,7 +93,7 @@ export default defineComponent({
         txListener(tx, {
           onTxConfirmed: async () => {
             emit('success', tx);
-            await lockerUserQuery.refetch.value();
+            await lockUserQuery.refetch.value();
             relocking.value = false;
           },
           onTxFailed: () => {

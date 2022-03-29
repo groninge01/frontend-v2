@@ -84,7 +84,7 @@ export default defineComponent({
 
     const { userUnstakedFbeetsBalance } = useFreshBeets();
 
-    const { lockerUserQuery, totalUnlockedAmount, withdraw } = useLockUser();
+    const { lockUserQuery, totalUnlockedAmount, withdraw } = useLockUser();
 
     const { txListener } = useEthers();
     const {
@@ -121,7 +121,7 @@ export default defineComponent({
           onTxConfirmed: async () => {
             emit('success', tx);
             amount.value = '';
-            await lockerUserQuery.refetch.value();
+            await lockUserQuery.refetch.value();
             withdrawing.value = false;
           },
           onTxFailed: () => {

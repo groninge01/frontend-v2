@@ -71,7 +71,7 @@ const routes: RouteRecordRaw[] = [
 if (
   ['development', 'staging'].includes(process.env.VUE_APP_ENV || 'development')
 ) {
-  routes.push({ path: '/lock', name: 'locker', component: Lock });
+  routes.push({ path: '/lock', name: 'lock', component: Lock });
 }
 
 const router = createRouter({

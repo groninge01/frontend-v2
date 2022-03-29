@@ -14,15 +14,15 @@ function bn(num: number | string) {
 }
 
 export function useLockRewards() {
-  const lockerRewardsQuery = useLockRewardsQuery();
-  const { isLoading, data } = lockerRewardsQuery;
+  const lockRewardsQuery = useLockRewardsQuery();
+  const { isLoading, data } = lockRewardsQuery;
 
-  const lockerRewardDataLoading = computed(() => isLoading.value);
+  const lockRewardDataLoading = computed(() => isLoading.value);
 
   const rewards = computed(() => data.value?.lockingPendingRewards);
 
   return {
-    lockerRewardDataLoading,
+    lockRewardDataLoading,
     rewards
   };
 }

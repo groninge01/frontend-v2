@@ -5,7 +5,7 @@ export const BALANCES_ROOT_KEY = 'accountBalances';
 export const CLAIMS_ROOT_KEY = 'claims';
 export const SWAPS_ROOT_KEY = 'swaps';
 export const TOKEN_PRICES_ROOT_KEY = 'tokenPrices';
-export const LOCKER_ROOT_KEY = 'locker';
+export const LOCKER_ROOT_KEY = 'lock';
 
 const QUERY_KEYS = {
   Farms: {

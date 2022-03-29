@@ -598,12 +598,12 @@ export default class BeethovenxService {
   }
 
   public async getLockData(): Promise<{
-    locker: GqlLock;
+    lock: GqlLock;
     lockingRewardTokens: GqlRewardToken[];
   }> {
     const query = jsonToGraphQLQuery({
       query: {
-        locker: {
+        lock: {
           totalLockedAmount: true,
           totalLockedUsd: true,
           totalLockedPercentage: true,
@@ -622,7 +622,7 @@ export default class BeethovenxService {
     });
 
     const data = await this.get<{
-      locker: GqlLock;
+      lock: GqlLock;
       lockingRewardTokens: GqlRewardToken[];
     }>(query);
 

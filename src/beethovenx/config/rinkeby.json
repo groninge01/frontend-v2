@@ -113,6 +113,6 @@
     "poolAddress": "0x0D2c043C11A7E2111cf11b74E07b0fF24D414286",
     "farmId": "5",
     "oldFarmId": "0",
-    "lockerAddress": "0x4E3dB1E512d1cf0d4e8700bd281df71fbFcf257B"
+    "lockAddress": "0x4E3dB1E512d1cf0d4e8700bd281df71fbFcf257B"
   }
 }

@@ -90,7 +90,7 @@ const tabs = [
   { value: 'lock', label: 'Lock' },
   { value: 'relock', label: 'Relock' },
   { value: 'withdraw', label: 'Withdraw' },
-  { value: 'my-locker', label: 'My Lock' }
+  { value: 'my-lock', label: 'My Lock' }
 ];
 
 const activeTab = ref(tabs[0].value);
@@ -147,7 +147,7 @@ const activeTab = ref(tabs[0].value);
           :loading="dataLoading"
         />
         <LockMyLocks
-          v-if="activeTab === 'my-locker'"
+          v-if="activeTab === 'my-lock'"
           :loading="dataLoading"
           :locks="lockingPeriods"
         />

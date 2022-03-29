@@ -15,7 +15,7 @@ export default class Lock {
   }
 
   public async lock(provider: Web3Provider, amount: string, account: string) {
-    return sendTransaction(provider, this.lockerAddress, LockAbi, 'lock', [
+    return sendTransaction(provider, this.lockAddress, LockAbi, 'lock', [
       account,
       BigNumber.from(amount)
     ]);
@@ -24,7 +24,7 @@ export default class Lock {
   public async relock(provider: Web3Provider) {
     return sendTransaction(
       provider,
-      this.lockerAddress,
+      this.lockAddress,
       LockAbi,
       'processExpiredLocks',
       [true]
@@ -34,7 +34,7 @@ export default class Lock {
   public async withdraw(provider: Web3Provider) {
     return sendTransaction(
       provider,
-      this.lockerAddress,
+      this.lockAddress,
       LockAbi,
       'processExpiredLocks',
       [false]
@@ -44,7 +44,7 @@ export default class Lock {
   public async getReward(provider: Web3Provider) {
     return sendTransaction(
       provider,
-      this.lockerAddress,
+      this.lockAddress,
       LockAbi,
       'getReward',
       []
@@ -64,7 +64,7 @@ export default class Lock {
   public get fbeetsAddress(): string {
     return this.service.config.fBeets.address || '';
   }
-  public get lockerAddress(): string {
-    return this.service.config.fBeets.lockerAddress || '';
+  public get lockAddress(): string {
+    return this.service.config.fBeets.lockAddress || '';
   }
 }

@@ -8,7 +8,7 @@ import useFarmUser from '@/beethovenx/composables/farms/useFarmUser';
 import usePools from '@/composables/pools/usePools';
 import { DecoratedFarm } from '@/beethovenx/services/subgraph/subgraph-types';
 import BigNumber from 'bignumber.js';
-import { lockerContractsService } from '@/beethovenx/services/lock/lock-contracts.service';
+import { lockContractsService } from '@/beethovenx/services/lock/lock-contracts.service';
 
 function bn(num: number | string) {
   return new BigNumber(num);
@@ -17,10 +17,10 @@ function bn(num: number | string) {
 export function useLockUser() {
   const { getProvider, appNetworkConfig, account } = useWeb3();
   const { addTransaction } = useTransactions();
-  const lockerUserQuery = useLockUserQuery();
-  const { isLoading, data, refetch } = lockerUserQuery;
+  const lockUserQuery = useLockUserQuery();
+  const { isLoading, data, refetch } = lockUserQuery;
 
-  const lockerUserDataLoading = computed(() => isLoading.value);
+  const lockUserDataLoading = computed(() => isLoading.value);
 
   const totalLockedAmount = computed(
     () => data.value?.gqlData.lockingUser.totalLockedAmount
@@ -51,8 +51,8 @@ export function useLockUser() {
   async function approve(amount?: string) {
     const tx = await erc20ContractService.erc20.approveToken(
       getProvider(),
-      lockerContractsService.locker.lockerAddress,
-      lockerContractsService.locker.fbeetsAddress,
+      lockContractsService.lock.lockAddress,
+      lockContractsService.lock.fbeetsAddress,
       amount
     );
 
@@ -62,8 +62,8 @@ export function useLockUser() {
       action: 'approve',
       summary: `Approve token`,
       details: {
-        contractAddress: lockerContractsService.locker.lockerAddress,
-        spender: lockerContractsService.locker.fbeetsAddress
+        contractAddress: lockContractsService.lock.lockAddress,
+        spender: lockContractsService.lock.fbeetsAddress
       }
     });
 
@@ -71,7 +71,7 @@ export function useLockUser() {
   }
 
   async function lock(amount: string, account: string) {
-    const tx = await lockerContractsService.locker.lock(
+    const tx = await lockContractsService.lock.lock(
       getProvider(),
       amount,
       account
@@ -83,8 +83,8 @@ export function useLockUser() {
       action: 'lock',
       summary: 'Lock fBEETS',
       details: {
-        contractAddress: lockerContractsService.locker.lockerAddress,
-        spender: lockerContractsService.locker.fbeetsAddress
+        contractAddress: lockContractsService.lock.lockAddress,
+        spender: lockContractsService.lock.fbeetsAddress
       }
     });
 
@@ -92,7 +92,7 @@ export function useLockUser() {
   }
 
   async function relock() {
-    const tx = await lockerContractsService.locker.relock(getProvider());
+    const tx = await lockContractsService.lock.relock(getProvider());
 
     addTransaction({
       id: tx.hash,
@@ -100,8 +100,8 @@ export function useLockUser() {
       action: 'lock',
       summary: 'Locking fBEETS',
       details: {
-        contractAddress: lockerContractsService.locker.lockerAddress,
-        spender: lockerContractsService.locker.fbeetsAddress
+        contractAddress: lockContractsService.lock.lockAddress,
+        spender: lockContractsService.lock.fbeetsAddress
       }
     });
 
@@ -109,7 +109,7 @@ export function useLockUser() {
   }
 
   async function withdraw() {
-    const tx = await lockerContractsService.locker.withdraw(getProvider());
+    const tx = await lockContractsService.lock.withdraw(getProvider());
 
     addTransaction({
       id: tx.hash,
@@ -117,8 +117,8 @@ export function useLockUser() {
       action: 'withdraw',
       summary: 'Withdrawing fBEETS',
       details: {
-        contractAddress: lockerContractsService.locker.lockerAddress,
-        spender: lockerContractsService.locker.fbeetsAddress
+        contractAddress: lockContractsService.lock.lockAddress,
+        spender: lockContractsService.lock.fbeetsAddress
       }
     });
 
@@ -128,16 +128,16 @@ export function useLockUser() {
   async function getReward() {
     try {
       const provider = getProvider();
-      const tx = await lockerContractsService.locker.getReward(provider);
+      const tx = await lockContractsService.lock.getReward(provider);
 
       addTransaction({
         id: tx.hash,
         type: 'tx',
         action: 'getReward',
-        summary: 'Get locker rewards',
+        summary: 'Get lock rewards',
         details: {
-          contractAddress: lockerContractsService.locker.lockerAddress,
-          spender: lockerContractsService.locker.lockerAddress
+          contractAddress: lockContractsService.lock.lockAddress,
+          spender: lockContractsService.lock.lockAddress
         }
       });
 
@@ -148,7 +148,7 @@ export function useLockUser() {
   }
 
   return {
-    lockerUserDataLoading,
+    lockUserDataLoading,
     totalLockedAmount,
     totalLockedAmountUsd,
     totalUnlockedAmount,
@@ -158,7 +158,7 @@ export function useLockUser() {
     lockedToVotingPowerRatio,
     lockingPeriods,
     refetch,
-    lockerUserQuery,
+    lockUserQuery,
     approve,
     lock,
     relock,
