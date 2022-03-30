@@ -1,24 +1,19 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import useWeb3 from '@/services/web3/useWeb3';
-import { fNum } from '@/composables/useNumbers';
 import { useFreshBeets } from '@/beethovenx/composables/stake/useFreshBeets';
-import { scaleDown } from '@/lib/utils';
-import { BigNumber } from 'bignumber.js';
 import LockHeader from '@/beethovenx/components/pages/lock/LockHeader.vue';
 import LockStatSideCard from '@/beethovenx/components/pages/lock/LockStatSideCard.vue';
 import LockStatCards from '@/beethovenx/components/pages/lock/LockStatCards.vue';
 import LockMyLocks from '@/beethovenx/components/pages/lock/LockMyLocks.vue';
 import BalTabs from '@/components/_global/BalTabs/BalTabs.vue';
-import useFarmUserQuery from '@/beethovenx/composables/farms/useFarmUserQuery';
 import LockDepositSteps from '@/beethovenx/components/pages/lock/LockDepositSteps.vue';
 import LockWithdrawSteps from '@/beethovenx/components/pages/lock/LockWithdrawSteps.vue';
 import useTokens from '@/composables/useTokens';
-import { getAddress } from '@ethersproject/address';
-import useFarmUser from '@/beethovenx/composables/farms/useFarmUser';
-import usePoolWithFarm from '@/beethovenx/composables/pool/usePoolWithFarm';
 import BalAlert from '@/components/_global/BalAlert/BalAlert.vue';
 import { useLockUser } from '@/beethovenx/composables/lock/useLockUser';
+import { fNum } from '@/composables/useNumbers';
+import { getAddress } from '@ethersproject/address';
 
 const { appNetworkConfig, isLoadingProfile } = useWeb3();
 const {
@@ -43,26 +38,6 @@ const {
   lockingPeriods
 } = useLockUser();
 
-const { farmUser, farmUserLoading } = useFarmUser(
-  appNetworkConfig.fBeets.farmId
-);
-const { pool, loadingPool } = usePoolWithFarm(appNetworkConfig.fBeets.poolId);
-const fbeetsDeposited = computed(() => {
-  const amount = farmUser.value?.amount;
-
-  return amount ? scaleDown(new BigNumber(amount), 18) : new BigNumber(0);
-});
-
-const bptBalance = computed(() => {
-  return fNum(
-    scaleDown(
-      new BigNumber(userBptTokenBalance.value.toString()),
-      18
-    ).toString(),
-    'token'
-  );
-});
-
 const hasUnstakedFbeets = computed(() => userUnstakedFbeetsBalance.value.gt(0));
 const hasBpt = computed(() => userBptTokenBalance.value.gt(0));
 
@@ -78,11 +53,7 @@ onMounted(() => {
 });
 
 const dataLoading = computed(
-  () =>
-    fBeetsLoading.value ||
-    farmUserLoading.value ||
-    tokensLoading.value ||
-    dynamicDataLoading.value
+  () => fBeetsLoading.value || tokensLoading.value || dynamicDataLoading.value
 );
 
 const tabs = [
@@ -132,15 +103,13 @@ const activeTab = ref(tabs[0].value);
         <LockDepositSteps
           v-if="activeTab === 'lock'"
           :hasBpt="hasBpt"
+          :hasBeets="beetsBalance > 0"
           :hasUnstakedFbeets="hasUnstakedFbeets"
-          :hasStakedFbeets="fbeetsDeposited.gt(0)"
           :loading="dataLoading"
         />
         <LockWithdrawSteps
           v-if="activeTab === 'withdraw'"
-          :hasBpt="hasBpt"
           :hasUnstakedFbeets="hasUnstakedFbeets"
-          :hasStakedFbeets="fbeetsDeposited.gt(0)"
           :loading="dataLoading"
         />
         <LockMyLocks

@@ -17,7 +17,7 @@
           block
           @click="trackGoal(Goals.ClickFarmWithdraw)"
         >
-          Withdraw ALL unlocked fBEETS
+          Withdraw fBEETS
         </BalBtn>
       </template>
     </div>
@@ -25,33 +25,16 @@
 </template>
 
 <script lang="ts">
-import {
-  computed,
-  defineComponent,
-  onMounted,
-  reactive,
-  ref,
-  toRefs,
-  watch
-} from 'vue';
+import { defineComponent, onMounted, reactive, ref, toRefs, watch } from 'vue';
 import { FormRef } from '@/types';
-import {
-  isLessThanOrEqualTo,
-  isPositive,
-  isRequired
-} from '@/lib/utils/validations';
+import { isRequired } from '@/lib/utils/validations';
 import { useI18n } from 'vue-i18n';
-import { scale, scaleDown, sleep } from '@/lib/utils';
 import useFathom from '@/composables/useFathom';
 
 import { TOKENS } from '@/constants/tokens';
 import useWeb3 from '@/services/web3/useWeb3';
 import useTokens from '@/composables/useTokens';
-import { BigNumber } from 'bignumber.js';
 import useEthers from '@/composables/useEthers';
-import { useFreshBeets } from '@/beethovenx/composables/stake/useFreshBeets';
-import BalLoadingBlock from '@/components/_global/BalLoadingBlock/BalLoadingBlock.vue';
-import useFarmUser from '@/beethovenx/composables/farms/useFarmUser';
 import { useLockUser } from '@/beethovenx/composables/lock/useLockUser';
 
 type DataProps = {
@@ -82,28 +65,15 @@ export default defineComponent({
       propToken: 0
     });
 
-    const { userUnstakedFbeetsBalance } = useFreshBeets();
-
     const { lockUserQuery, totalUnlockedAmount, withdraw } = useLockUser();
 
     const { txListener } = useEthers();
-    const {
-      isWalletReady,
-      account,
-      toggleWalletSelectModal,
-      appNetworkConfig
-    } = useWeb3();
+    const { isWalletReady, account, toggleWalletSelectModal } = useWeb3();
     const withdrawing = ref(false);
     const { t } = useI18n();
     const { tokens } = useTokens();
     const { trackGoal, Goals } = useFathom();
     const { amount } = toRefs(data);
-    const { refetchBalances } = useTokens();
-    const { farmUserRefetch } = useFarmUser(appNetworkConfig.fBeets.farmId);
-
-    const bptDeposited = computed(() => {
-      return userUnstakedFbeetsBalance.value.toString();
-    });
 
     async function submit(): Promise<void> {
       if (!data.withdrawForm.validate()) return;
@@ -155,15 +125,12 @@ export default defineComponent({
 
       Goals,
       TOKENS,
-      // computed
       tokens,
       isWalletReady,
       toggleWalletSelectModal,
       isRequired,
-      // methods
       submit,
       trackGoal,
-      bptDeposited,
       totalUnlockedAmount
     };
   }

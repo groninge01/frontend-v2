@@ -2,27 +2,24 @@
 import useWeb3 from '@/services/web3/useWeb3';
 import StepContainer from '@/beethovenx/components/containers/StepContainer.vue';
 import BalBtn from '@/components/_global/BalBtn/BalBtn.vue';
-import FreshBeetsDepositForm from '@/beethovenx/components/pages/fbeets/FreshBeetsDepositForm.vue';
 import LockDepositForm from '@/beethovenx/components/pages/lock/LockDepositForm.vue';
-import { useFreshBeets } from '@/beethovenx/composables/stake/useFreshBeets';
-import useFarmUserQuery from '@/beethovenx/composables/farms/useFarmUserQuery';
+import FreshBeetsDepositForm from '@/beethovenx/components/pages/fbeets/FreshBeetsDepositForm.vue';
+import { useLockUser } from '@/beethovenx/composables/lock/useLockUser';
 
 type Props = {
   hasBpt: boolean;
+  hasBeets: boolean;
   hasUnstakedFbeets: boolean;
-  hasStakedFbeets: boolean;
   loading: boolean;
 };
 
 const props = defineProps<Props>();
 
 const { appNetworkConfig } = useWeb3();
-const { freshBeetsQuery } = useFreshBeets();
-const farmUserQuery = useFarmUserQuery(appNetworkConfig.fBeets.farmId);
+const { lockUserQuery } = useLockUser();
 
-function handleFarmDeposit(txReceipt): void {
-  freshBeetsQuery.refetch.value();
-  farmUserQuery.refetch.value();
+function handleLockDeposit(txReceipt): void {
+  lockUserQuery.refetch.value();
 }
 </script>
 
@@ -30,7 +27,7 @@ function handleFarmDeposit(txReceipt): void {
   <StepContainer
     :step-number="1"
     title="Deposit your BEETS or FTM into the Fidelio Duetto pool"
-    :complete="props.hasBpt || props.hasUnstakedFbeets || props.hasStakedFbeets"
+    :complete="!props.hasBeets"
   >
     <template v-slot:right>
       <BalBtn
@@ -48,7 +45,7 @@ function handleFarmDeposit(txReceipt): void {
     v-if="props.hasBpt"
     :step-number="2"
     title="Use your Fidelio Duetto BPTs to mint fBEETS"
-    :complete="props.hasUnstakedFbeets || props.hasStakedFbeets"
+    :complete="!props.hasUnstakedFbeets"
   >
     <template v-slot:content>
       <FreshBeetsDepositForm :loading="props.loading" />
@@ -56,7 +53,7 @@ function handleFarmDeposit(txReceipt): void {
   </StepContainer>
   <StepContainer
     :step-number="props.hasBpt ? 3 : 2"
-    title="Lock your fBEETS in the fBEETS locker"
+    title="Lock your fBEETS"
     :complete="props.hasStakedFbeets"
   >
     <template v-slot:content>
@@ -65,7 +62,7 @@ function handleFarmDeposit(txReceipt): void {
         :token-address="appNetworkConfig.fBeets.address"
         token-name="fBEETS"
         :data-loading="props.loading"
-        @success="handleFarmDeposit($event)"
+        @success="handleLockDeposit($event)"
       />
     </template>
   </StepContainer>

@@ -4,40 +4,35 @@ import StepContainer from '@/beethovenx/components/containers/StepContainer.vue'
 import BalBtn from '@/components/_global/BalBtn/BalBtn.vue';
 import LockWithdrawForm from '@/beethovenx/components/pages/lock/LockWithdrawForm.vue';
 import FreshBeetsWithdrawForm from '@/beethovenx/components/pages/fbeets/FreshBeetsWithdrawForm.vue';
-import { useFreshBeets } from '@/beethovenx/composables/stake/useFreshBeets';
-import useFarmUserQuery from '@/beethovenx/composables/farms/useFarmUserQuery';
+import { useLockUser } from '@/beethovenx/composables/lock/useLockUser';
 
 type Props = {
-  hasBpt: boolean;
   hasUnstakedFbeets: boolean;
-  hasStakedFbeets: boolean;
   loading: boolean;
 };
 
 const props = defineProps<Props>();
 
 const { appNetworkConfig } = useWeb3();
-const { freshBeetsQuery } = useFreshBeets();
-const farmUserQuery = useFarmUserQuery(appNetworkConfig.fBeets.farmId);
+const { lockUserQuery, totalUnlockedAmount } = useLockUser();
 
-function handleFarmWithdrawal(txReceipt): void {
-  freshBeetsQuery.refetch.value();
-  farmUserQuery.refetch.value();
+function handleLockWithdrawal(txReceipt): void {
+  lockUserQuery.refetch.value();
 }
 </script>
 
 <template>
   <StepContainer
     :step-number="1"
-    title="Withdraw ALL your unlocked fBEETS from the fBEETS locker"
-    :complete="false"
+    title="Withdraw ALL your unlocked fBEETS"
+    :complete="totalUnlockedAmount === '0'"
   >
     <template v-slot:content>
       <LockWithdrawForm
         :farm-id="appNetworkConfig.fBeets.farmId"
         :token-address="appNetworkConfig.fBeets.address"
         token-name="fBEETS"
-        @success="handleFarmWithdrawal($event)"
+        @success="handleLockWithdrawal($event)"
         :data-loading="props.loading"
       />
     </template>
@@ -45,7 +40,7 @@ function handleFarmWithdrawal(txReceipt): void {
   <StepContainer
     :step-number="2"
     title="Burn your fBEETS to receive Fidelio Duetto BPTs"
-    :complete="props.hasBpt"
+    :complete="!props.hasUnstakedFbeets"
   >
     <template v-slot:content>
       <FreshBeetsWithdrawForm :loading="props.loading" />
