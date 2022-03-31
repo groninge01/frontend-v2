@@ -1,36 +1,28 @@
 <template>
-  <BalCard growContent>
+  <BalLoadingBlock v-if="lockRewardDataLoading" class="h-64" />
+  <BalCard v-else growContent>
     <div class="text-sm text-gray-500 font-medium mb-2">
       My Pending Rewards
     </div>
     <div
-      v-if="hasBeetsRewards"
+      v-for="(reward, index) in rewards"
+      :key="index"
       class="text-xl font-medium truncate flex items-center"
     >
-      {{ fNum(pendingBeets, 'token_fixed') }} BEETS
+      {{ fNum(reward.amount, 'token_fixed') }} BEETS
     </div>
-    <div
-      v-if="hasBeetsRewards"
-      class="text-xl font-medium truncate flex items-center"
-    >
-      {{ fNum('12.5', 'token_fixed') }} USDC
+    <div class="text-xl font-medium truncate flex items-center">
+      {{ fNum('11.564645', 'token_fixed') }} USDC
     </div>
-    <div
-      v-if="hasBeetsRewards"
-      class="text-xl font-medium truncate flex items-center"
-    >
-      {{ fNum('13.8', 'token_fixed') }} FTM
-    </div>
-
-    <div class="truncate flex items-center pb-8">
-      ({{ fNum(pendingBeetsValue + pendingRewardTokenValue, 'usd') }})
+    <div class="text-sm text-gray-500 font-medium mt-1 text-left">
+      {{ fNum(totalRewardsUsd, 'usd') }}
     </div>
     <template v-slot:footer>
       <BalBtn
         label="Claim All"
         block
         color="gradient"
-        :disabled="pendingBeets <= 0 && pendingRewardToken <= 0"
+        :disabled="totalRewards <= 0"
         :loading="gettingReward"
         @click.prevent="getLockReward"
       />
@@ -39,61 +31,31 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 import useNumbers from '@/composables/useNumbers';
 import useEthers from '@/composables/useEthers';
-import useFarmUser from '@/beethovenx/composables/farms/useFarmUser';
 import { useLockUser } from '@/beethovenx/composables/lock/useLockUser';
+import { useLockRewards } from '@/beethovenx/composables/lock/useLockRewards';
+import { sumBy } from 'lodash';
 
 export default defineComponent({
-  name: 'FarmHarvestRewardsCard',
+  name: 'LockClaimRewardsCard',
 
   components: {},
 
-  props: {
-    hasBeetsRewards: {
-      type: Boolean,
-      required: true
-    },
-    hasThirdPartyRewards: {
-      type: Boolean,
-      required: true
-    },
-    pendingBeets: {
-      type: Number,
-      required: true
-    },
-    pendingRewardToken: {
-      type: Number,
-      required: true
-    },
-    pendingBeetsValue: {
-      type: Number,
-      required: true
-    },
-    pendingRewardTokenValue: {
-      type: Number,
-      required: true
-    },
-    farmId: {
-      type: String,
-      required: true
-    },
-    tokenAddress: {
-      type: String,
-      required: true
-    },
-    rewardTokenSymbol: {
-      type: String
-    }
-  },
-
-  setup(props) {
+  setup() {
     const { fNum } = useNumbers();
     const { txListener } = useEthers();
     const { getReward } = useLockUser();
+    const {
+      rewards,
+      lockRewardsQuery,
+      lockRewardDataLoading
+    } = useLockRewards();
     const gettingReward = ref(false);
-    const { farmUserRefetch } = useFarmUser(props.farmId);
+
+    const totalRewards = computed(() => sumBy(rewards.value, 'amount'));
+    const totalRewardsUsd = computed(() => sumBy(rewards.value, 'amountUsd'));
 
     async function getLockReward(): Promise<void> {
       gettingReward.value = true;
@@ -106,7 +68,7 @@ export default defineComponent({
 
       txListener(tx, {
         onTxConfirmed: async () => {
-          await farmUserRefetch.value();
+          await lockRewardsQuery.refetch.value();
           gettingReward.value = false;
         },
         onTxFailed: () => {
@@ -118,7 +80,11 @@ export default defineComponent({
     return {
       fNum,
       getLockReward,
-      gettingReward
+      totalRewards,
+      totalRewardsUsd,
+      rewards,
+      gettingReward,
+      lockRewardDataLoading
     };
   }
 });

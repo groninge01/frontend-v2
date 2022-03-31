@@ -87,9 +87,6 @@ const activeTab = ref(tabs[0].value);
           class="mb-4"
         />
       </div>
-      <div
-        class="hidden w-full max-w-xl mx-auto md:mx-0 md:ml-6 md:block md:w-72"
-      />
     </div>
 
     <div class="lg:flex justify-center mb-8">
@@ -117,9 +114,6 @@ const activeTab = ref(tabs[0].value);
           :loading="dataLoading"
           :locks="lockingPeriods"
         />
-      </div>
-      <div class="w-full lg:max-w-xl mx-auto md:mx-0 lg:ml-6 md:block lg:w-72">
-        <LockStatSideCard />
       </div>
     </div>
   </div>

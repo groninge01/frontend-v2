@@ -143,10 +143,13 @@ export default defineComponent({
     const { fNum } = useNumbers();
     const { t } = useI18n();
     const { userUnstakedFbeetsBalance, freshBeetsQuery } = useFreshBeets();
-    const { userAllowance, refetch, approve, lock } = useLockUser();
-
-    const { farmUserRefetch } = useFarmUser(appNetworkConfig.fBeets.farmId);
-    const { refetchAllowances } = useTokens();
+    const {
+      userAllowance,
+      refetch,
+      lockUserQuery,
+      approve,
+      lock
+    } = useLockUser();
 
     const { amount } = toRefs(data);
     const depositing = ref(false);
@@ -222,7 +225,7 @@ export default defineComponent({
 
         txListener(tx, {
           onTxConfirmed: async () => {
-            await freshBeetsQuery.refetch.value();
+            await lockUserQuery.refetch.value();
             emit('success', tx);
             data.amount = '';
             depositing.value = false;

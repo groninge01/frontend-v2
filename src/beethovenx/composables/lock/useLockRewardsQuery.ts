@@ -22,7 +22,8 @@ export default function useLockQuery() {
   };
 
   const queryOptions = reactive({
-    enabled
+    enabled,
+    refetchInterval: 5000
   });
 
   return useQuery<QueryResponse>(queryKey, queryFn, queryOptions);

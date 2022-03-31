@@ -11,6 +11,7 @@ export function useLockRewards() {
 
   return {
     lockRewardDataLoading,
+    lockRewardsQuery,
     rewards
   };
 }
