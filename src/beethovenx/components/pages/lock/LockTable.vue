@@ -1,18 +1,11 @@
 <script setup lang="ts">
-import { defineEmits, defineProps, computed } from 'vue';
+import { defineProps, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { format, formatDistanceToNow } from 'date-fns';
-
-import useTokens from '@/composables/useTokens';
+import { format } from 'date-fns';
 import useNumbers from '@/composables/useNumbers';
 import useBreakpoints from '@/composables/useBreakpoints';
-
 import { GqlLockingPeriod } from '@/beethovenx/services/beethovenx/beethovenx-types';
-
 import { ColumnDefinition } from '@/components/_global/BalTable/BalTable.vue';
-
-import { bnum } from '@/lib/utils';
-import useWeb3 from '@/services/web3/useWeb3';
 
 /**
  * TYPES
@@ -36,9 +29,7 @@ type Props = {
  * PROPS & EMITS
  */
 const props = withDefaults(defineProps<Props>(), {
-  isLoading: false,
-  isLoadingMore: false,
-  isPaginated: false
+  isLoading: false
 });
 
 /**
@@ -46,9 +37,7 @@ const props = withDefaults(defineProps<Props>(), {
  */
 const { fNum } = useNumbers();
 const { t } = useI18n();
-const { priceFor } = useTokens();
 const { upToLargeBreakpoint } = useBreakpoints();
-const { explorerLinks } = useWeb3();
 
 /**
  * COMPUTED

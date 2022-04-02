@@ -92,16 +92,12 @@ import {
 } from '@/lib/utils/validations';
 import { useI18n } from 'vue-i18n';
 import useNumbers from '@/composables/useNumbers';
-import { scale, scaleDown, sleep } from '@/lib/utils';
+import { scale } from '@/lib/utils';
 import useWeb3 from '@/services/web3/useWeb3';
 import useEthers from '@/composables/useEthers';
 import BigNumber from 'bignumber.js';
 import { useFreshBeets } from '@/beethovenx/composables/stake/useFreshBeets';
 import { useLockUser } from '@/beethovenx/composables/lock/useLockUser';
-import useAllowanceAvailableQuery from '@/beethovenx/composables/farms/useAllowanceAvailableQuery';
-import { governanceContractsService } from '@/beethovenx/services/governance/governance-contracts.service';
-import useTokens from '@/composables/useTokens';
-import useFarmUser from '@/beethovenx/composables/farms/useFarmUser';
 
 type DataProps = {
   depositForm: FormRef;
@@ -142,7 +138,7 @@ export default defineComponent({
     } = useWeb3();
     const { fNum } = useNumbers();
     const { t } = useI18n();
-    const { userUnstakedFbeetsBalance, freshBeetsQuery } = useFreshBeets();
+    const { userUnstakedFbeetsBalance } = useFreshBeets();
     const {
       userAllowance,
       refetch,
