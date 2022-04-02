@@ -13,8 +13,8 @@
               Newly locked fBEETS will be added to your voting power at the
               start of the next epoch. Relocked fBEETS will be added
               immediately. Unlocked fBEETS will be removed from your voting
-              power. The percentage shows the ratio of locked/unlocked vs voting
-              power.
+              power. The percentage shows the ratio of voting power vs locked
+              plus unlocked.
             </div>
           </BalTooltip>
         </div>

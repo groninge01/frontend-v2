@@ -15,10 +15,9 @@ import { useLockUser } from '@/beethovenx/composables/lock/useLockUser';
 import { fNum } from '@/composables/useNumbers';
 import { getAddress } from '@ethersproject/address';
 
-const { appNetworkConfig, isLoadingProfile } = useWeb3();
+const { appNetworkConfig } = useWeb3();
 const {
   fBeetsLoading,
-  userFbeetsBalance,
   userBptTokenBalance,
   userUnstakedFbeetsBalance
 } = useFreshBeets();
@@ -30,11 +29,8 @@ const {
 } = useTokens();
 const {
   totalLockedAmount,
-  totalLockedAmountUsd,
   totalUnlockedAmount,
-  totalUnlockedAmountUsd,
   lockingUserVotingPower,
-  lockedToVotingPowerRatio,
   lockingPeriods
 } = useLockUser();
 
@@ -71,20 +67,32 @@ const activeTab = ref(tabs[0].value);
     <div class="flex justify-center">
       <div class="w-full max-w-3xl">
         <BalAlert
+          v-if="
+            lockingUserVotingPower < totalLockedAmount - totalUnlockedAmount
+          "
+          title="You have locked new fBEETS"
+          description="Your newly locked fBEETS will be added to your voting power at the start of the next epoch."
+          size="md"
+          class="mb-4"
+          block
+        />
+        <BalAlert
           v-if="userBptTokenBalance.gt(0)"
           title="You have unstaked BPT in your wallet"
           description="Use your BPT's to mint fBEETS and be eligible to earn a portion of Beethoven X Protocol Revenue."
           type="warning"
           size="md"
           class="mb-4"
+          block
         />
         <BalAlert
-          v-if="userBptTokenBalance.eq(0) && userUnstakedFbeetsBalance.gt(0)"
+          v-if="userUnstakedFbeetsBalance.gt(0)"
           title="You have fBEETS in your wallet"
           description="Lock your fBEETS to earn additional rewards and have voting power."
           type="warning"
           size="md"
           class="mb-4"
+          block
         />
       </div>
     </div>

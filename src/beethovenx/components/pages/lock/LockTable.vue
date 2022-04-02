@@ -44,13 +44,22 @@ const { upToLargeBreakpoint } = useBreakpoints();
  */
 const columns = computed<ColumnDefinition<LockRow>[]>(() => [
   {
+    name: 'Locked?',
+    id: 'locked',
+    accessor: '',
+    Cell: 'lockedCell',
+    align: 'left',
+    sortable: false,
+    width: 75
+  },
+  {
     name: t('amount'),
     id: 'amount',
     accessor: '',
     Cell: 'amountCell',
-    width: 125,
-    align: 'left',
-    sortable: false
+    align: 'right',
+    sortable: false,
+    width: 75
   },
   {
     name: t('value'),
@@ -60,7 +69,7 @@ const columns = computed<ColumnDefinition<LockRow>[]>(() => [
     align: 'right',
     className: 'align-center w-40',
     sortKey: lockingPeriods => lockingPeriods.lockAmountUsd,
-    width: 125
+    width: 75
   },
   {
     name: t('date'),
@@ -69,18 +78,20 @@ const columns = computed<ColumnDefinition<LockRow>[]>(() => [
     Cell: 'timeCell',
     align: 'right',
     sortKey: pool => pool.epoch,
-    width: 200
+    width: 150
   }
 ]);
 
-const twelveWeeksInSeconds = 12 * 7 * 24 * 60 * 60 * 1000;
+// const twelveWeeksInSeconds = 12 * 7 * 24 * 60 * 60 * 1000;
+const twelveWeeksInSeconds = 1 * 60 * 60;
 
 const lockPeriodRows = computed<LockRow[]>(() =>
   props.isLoading
     ? []
     : props.lockingPeriods.map(({ lockAmount, lockAmountUsd, epoch }) => {
+        const endDate = new Date(parseInt(epoch) * 1000 + twelveWeeksInSeconds);
         return {
-          locked: Date.now() < parseInt(epoch),
+          locked: Date.now() < endDate.getTime(),
           lockAmount,
           lockAmountUsd,
           formattedAmountUsd: fNum(
@@ -88,10 +99,7 @@ const lockPeriodRows = computed<LockRow[]>(() =>
             'usd_m'
           ),
           epoch,
-          formattedEpoch: format(
-            new Date(parseInt(epoch) * 1000 + twelveWeeksInSeconds),
-            'Pp'
-          )
+          formattedEpoch: format(endDate, 'Pp')
         };
       })
 );
@@ -108,9 +116,6 @@ const lockPeriodRows = computed<LockRow[]>(() =>
       :columns="columns"
       :data="lockPeriodRows"
       :is-loading="isLoading"
-      :is-loading-more="isLoadingMore"
-      :is-paginated="isPaginated"
-      @load-more="emit('loadMore')"
       skeleton-class="h-64"
       sticky="both"
       :no-results-label="noResultsLabel"
@@ -119,10 +124,10 @@ const lockPeriodRows = computed<LockRow[]>(() =>
         sortDirection: 'desc'
       }"
     >
-      <template v-slot:actionCell>
+      <template v-slot:lockedCell="action">
         <div class="px-6 py-2">
           <div class="flex items-center">
-            {{ action.locked ? 'Locked' : 'Unlocked' }}
+            {{ action.locked ? 'Yes' : 'No' }}
           </div>
         </div>
       </template>

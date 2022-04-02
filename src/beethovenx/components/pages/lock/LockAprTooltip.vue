@@ -24,9 +24,9 @@
           </span>
         </div>
         <div class="whitespace-nowrap flex items-center mb-1">
-          {{ fNum(farmApr, 'percent') }}
+          {{ fNum(totalRewardsApr, 'percent') }}
           <span class="ml-1 text-gray-500 text-xs">
-            Farm APR
+            Lock Rewards APR
           </span>
         </div>
       </div>
@@ -46,7 +46,7 @@ export default defineComponent({
       type: Number,
       required: true
     },
-    farmApr: {
+    totalRewardsApr: {
       type: Number,
       required: true
     },
@@ -62,7 +62,7 @@ export default defineComponent({
      */
     const { fNum } = useNumbers();
     const totalApr = computed(() => {
-      return props.swapApr + props.farmApr + props.fbeetsApr;
+      return props.swapApr + props.totalRewardsApr + props.fbeetsApr;
     });
 
     return { totalApr, fNum };

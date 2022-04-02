@@ -11,9 +11,6 @@
     >
       {{ fNum(reward.amount, 'token_fixed') }} BEETS
     </div>
-    <div class="text-xl font-medium truncate flex items-center">
-      {{ fNum('11.564645', 'token_fixed') }} USDC
-    </div>
     <div class="text-sm text-gray-500 font-medium mt-1 text-left">
       {{ fNum(totalRewardsUsd, 'usd') }}
     </div>

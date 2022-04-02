@@ -9,9 +9,9 @@
         <div class="text-xl font-medium truncate flex items-center">
           {{ fNum(totalApr, 'percent') }}
           <LockAprTooltip
-            :swap-apr="0.026"
-            :farm-apr="0.045"
-            :fbeets-apr="0.65"
+            :swap-apr="swapApr"
+            :total-rewards-apr="totalRewardsApr"
+            :fbeets-apr="fbeetsApr"
           />
         </div>
       </div>
@@ -22,7 +22,7 @@
         <div class="text-xl font-medium truncate flex items-center">
           {{ fNum(totalLockedAmount) }}&nbsp;
           <span class="text-sm text-gray-500 font-medium mt-1 text-left">
-            ({{ fNum(totalLockedPercentage, 'percent') }})
+            ({{ fNum(totalLockedPercentage, 'percent') }} of total supply)
           </span>
         </div>
       </div>
@@ -44,6 +44,8 @@ import useNumbers from '@/composables/useNumbers';
 import { useLock } from '@/beethovenx/composables/lock/useLock';
 import LockAprTooltip from '@/beethovenx/components/pages/lock/LockAprTooltip.vue';
 import { format } from 'date-fns';
+import { useFreshBeets } from '@/beethovenx/composables/stake/useFreshBeets';
+import { sum } from 'lodash';
 
 export default defineComponent({
   name: 'LockMyStatsCard',
@@ -57,8 +59,9 @@ export default defineComponent({
       totalLockedAmount,
       totalLockedUsd,
       totalLockedPercentage,
-      totalApr
+      totalRewardsApr
     } = useLock();
+    const { swapApr, fbeetsApr } = useFreshBeets();
 
     function nextDay(d, dow: number) {
       const addDays = (dow + (7 - d.getDay())) % 7 || 7;
@@ -72,14 +75,21 @@ export default defineComponent({
       return nextDay(today, 4);
     });
 
+    const totalApr = computed(() =>
+      sum([totalRewardsApr.value, swapApr.value, fbeetsApr.value])
+    );
+
     return {
       fNum,
       lockDataLoading,
       totalLockedAmount,
       totalLockedUsd,
       totalLockedPercentage,
-      totalApr,
-      nextEpochStartDate
+      totalRewardsApr,
+      nextEpochStartDate,
+      swapApr,
+      fbeetsApr,
+      totalApr
     };
   }
 });

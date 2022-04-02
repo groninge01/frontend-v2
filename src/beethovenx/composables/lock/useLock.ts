@@ -18,7 +18,7 @@ export function useLock() {
   const timestamp = computed(() => data.value?.locker.timestamp);
   const block = computed(() => data.value?.locker.block);
 
-  const totalApr = computed(() => {
+  const totalRewardsApr = computed(() => {
     const tokens = data.value?.lockingRewardTokens;
     return sumBy(tokens, token => parseFloat(token.apr));
   });
@@ -30,6 +30,6 @@ export function useLock() {
     totalLockedPercentage,
     timestamp,
     block,
-    totalApr
+    totalRewardsApr
   };
 }

@@ -25,6 +25,6 @@ const lockingPeriods = computed(() =>
   <LockTable
     :locking-periods="lockingPeriods"
     :is-loading="loading"
-    no-results-label="You have no locked or unlocked tokens in your locker."
+    no-results-label="You have no locked fBEETS."
   />
 </template>
