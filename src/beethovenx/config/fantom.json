@@ -113,6 +113,6 @@
     "poolAddress": "0xcde5a11a4acb4ee4c805352cec57e236bdbc3837",
     "farmId": "22",
     "oldFarmId": "9",
-    "lockAddress": "0xcde5a11a4acb4ee4c805352cec57e23600000000"
+    "lockAddress": "0x"
   }
 }
