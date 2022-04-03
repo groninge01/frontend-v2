@@ -82,16 +82,26 @@ const columns = computed<ColumnDefinition<LockRow>[]>(() => [
   }
 ]);
 
-//const twelveWeeksInSeconds = 12 * 7 * 24 * 60 * 60;
-const twelveWeeksInSeconds = 1 * 60 * 60; // 12 weeks on rinkeby :)
+function getEpochTime(): number {
+  let twelveWeeksInSeconds: number;
+  if (
+    ['development', 'staging'].includes(
+      process.env.VUE_APP_ENV || 'development'
+    )
+  ) {
+    twelveWeeksInSeconds = 1 * 60 * 60; // 12 weeks on rinkeby :)
+  } else {
+    twelveWeeksInSeconds = 12 * 7 * 24 * 60 * 60;
+  }
+
+  return twelveWeeksInSeconds;
+}
 
 const lockPeriodRows = computed<LockRow[]>(() =>
   props.isLoading
     ? []
     : props.lockingPeriods.map(({ lockAmount, lockAmountUsd, epoch }) => {
-        const endDate = new Date(
-          (parseInt(epoch) + twelveWeeksInSeconds) * 1000
-        );
+        const endDate = new Date((parseInt(epoch) + getEpochTime()) * 1000);
         return {
           locked: Date.now() < endDate.getTime(),
           lockAmount,
