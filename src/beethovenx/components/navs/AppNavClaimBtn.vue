@@ -1,79 +1,3 @@
-<script setup lang="ts">
-import { computed, ref } from 'vue';
-import useNumbers from '@/composables/useNumbers';
-import numeral from 'numeral';
-import useEthers from '@/composables/useEthers';
-import useBreakpoints from '@/composables/useBreakpoints';
-import useUserPoolData from '@/beethovenx/composables/useUserPoolData';
-import useUserPendingRewards from '@/beethovenx/composables/useUserPendingRewards';
-import { masterChefContractsService } from '@/beethovenx/services/farm/master-chef-contracts.service';
-import useWeb3 from '@/services/web3/useWeb3';
-import useTransactions from '@/composables/useTransactions';
-
-const { txListener } = useEthers();
-const { fNum } = useNumbers();
-const { userPoolDataLoading, userPoolData } = useUserPoolData();
-const {
-  userPendingRewardsQuery,
-  userPendingRewards,
-  userPendingRewardsLoading
-} = useUserPendingRewards();
-const { getProvider, appNetworkConfig, account } = useWeb3();
-const { addTransaction } = useTransactions();
-
-const harvesting = ref(false);
-const { upToLargeBreakpoint } = useBreakpoints();
-
-const hasFarmRewards = computed(
-  () => parseFloat(userPendingRewards.value.farm.totalBalanceUSD) > 0
-);
-
-async function harvestAllFarms(farmIds: string[]) {
-  try {
-    const provider = getProvider();
-    const tx = await masterChefContractsService.masterChef.harvestAll(
-      provider,
-      farmIds,
-      account.value
-    );
-
-    addTransaction({
-      id: tx.hash,
-      type: 'tx',
-      action: 'claim',
-      summary: 'Harvest all rewards',
-      details: {
-        spender: appNetworkConfig.addresses.masterChef
-      }
-    });
-
-    return tx;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-async function harvestAllRewards(): Promise<void> {
-  harvesting.value = true;
-  const tx = await harvestAllFarms(userPendingRewards.value.farm.farmIds);
-
-  if (!tx) {
-    harvesting.value = false;
-    return;
-  }
-
-  txListener(tx, {
-    onTxConfirmed: async () => {
-      await userPendingRewardsQuery.refetch.value();
-      harvesting.value = false;
-    },
-    onTxFailed: () => {
-      harvesting.value = false;
-    }
-  });
-}
-</script>
-
 <template>
   <BalPopover no-pad>
     <template v-slot:activator>
@@ -109,10 +33,7 @@ async function harvestAllRewards(): Promise<void> {
         <div class="text-sm text-gray-500 font-medium mb-2 text-left">
           Pending Rewards
         </div>
-        <template
-          v-for="(token, idx) in userPendingRewards.farm.tokens"
-          :key="idx"
-        >
+        <template v-for="(token, idx) in data.rewardTokens" :key="idx">
           <div class="text-xl font-medium truncate flex items-center">
             {{ numeral(token.balance).format('0,0.[0000]') }}
             {{ token.symbol }}
@@ -167,3 +88,120 @@ async function harvestAllRewards(): Promise<void> {
     </div>
   </BalPopover>
 </template>
+
+<script lang="ts">
+import { computed, defineComponent, PropType, ref } from 'vue';
+import useNumbers from '@/composables/useNumbers';
+import { groupBy, map, sumBy } from 'lodash';
+import numeral from 'numeral';
+import usePools from '@/composables/pools/usePools';
+import useEthers from '@/composables/useEthers';
+import useBreakpoints from '@/composables/useBreakpoints';
+import { Alert } from '@/composables/useAlerts';
+
+export default defineComponent({
+  name: 'AppNavClaimBtn',
+
+  props: {
+    alert: { type: Object as PropType<Alert>, required: true }
+  },
+
+  setup(props) {
+    const { txListener } = useEthers();
+    const { fNum } = useNumbers();
+    const {
+      isLoadingPools,
+      isLoadingFarms,
+      onlyPoolsWithFarms,
+      harvestAllFarms,
+      refetchFarmsForUser
+    } = usePools();
+    const harvesting = ref(false);
+    const { upToLargeBreakpoint } = useBreakpoints();
+
+    const data = computed(() => {
+      const farms = onlyPoolsWithFarms.value.map(pool => pool.decoratedFarm);
+      const farmsWithRewardTokens = farms.filter(
+        farm => farm.pendingRewardTokens !== null
+      );
+      const rewardTokens = map(
+        groupBy(
+          farmsWithRewardTokens.map(farm => farm.pendingRewardTokens).flat(),
+          rewardToken => rewardToken.symbol
+        ),
+        group => ({
+          symbol: group[0].symbol || '',
+          amount: sumBy(group, item => parseFloat(item.balance)) || 0,
+          value: sumBy(group, item => parseFloat(item.balanceUSD))
+        })
+      ).filter(token => token.value > 0);
+
+      const pendingRewardTokenValue = sumBy(rewardTokens, token => token.value);
+
+      const averageApr =
+        sumBy(farms, farm => farm.apr * (farm.stake || 0)) /
+        sumBy(farms, farm => farm.stake || 0);
+
+      return {
+        numFarms: farms.filter(farm => farm.stake > 0).length,
+        totalBalance: fNum(
+          sumBy(farms, farm => farm.stake || 0),
+          'usd'
+        ),
+        pendingRewardValue: fNum(pendingRewardTokenValue, 'usd'),
+        apr: fNum(averageApr, 'percent'),
+        dailyApr: fNum(averageApr / 365, 'percent'),
+        rewardTokens
+      };
+    });
+
+    const hasFarmRewards = computed(
+      () =>
+        onlyPoolsWithFarms.value.filter(pool => pool.decoratedFarm.stake > 0)
+          .length > 0
+    );
+
+    async function harvestAllRewards(): Promise<void> {
+      const farmIds = onlyPoolsWithFarms.value
+        .filter(pool => pool.decoratedFarm.stake > 0)
+        .map(pool => pool.decoratedFarm.id);
+
+      harvesting.value = true;
+      const tx = await harvestAllFarms(farmIds);
+
+      if (!tx) {
+        harvesting.value = false;
+        return;
+      }
+
+      txListener(tx, {
+        onTxConfirmed: async () => {
+          await refetchFarmsForUser();
+          harvesting.value = false;
+        },
+        onTxFailed: () => {
+          harvesting.value = false;
+        }
+      });
+    }
+
+    return {
+      data,
+      hasFarmRewards,
+      fNum,
+      numeral,
+      harvestAllRewards,
+      harvesting,
+      upToLargeBreakpoint,
+      isLoadingPools,
+      isLoadingFarms
+    };
+  }
+});
+</script>
+
+<style>
+.app-nav-alert {
+  @apply flex items-center justify-between py-4 px-6;
+}
+</style>
