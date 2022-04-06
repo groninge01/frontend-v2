@@ -3,46 +3,29 @@
  * TYPES
  */
 
-import useGasPriceEstimationQuery from '@/services/gas-price/useGasPriceEstimationQuery';
-import { computed, onMounted } from 'vue';
+import { useGasEstimates } from '@/beethovenx/composables/gas-estimates/useGasEstimates';
 import useGasEstimationState from '@/components/gas-estimation/useGasEstimationState';
 import BalLoadingBlock from '@/components/_global/BalLoadingBlock/BalLoadingBlock.vue';
 
-const { data, isLoading, refetch } = useGasPriceEstimationQuery();
+const { speeds, gasEstimatesDataLoading } = useGasEstimates();
 const { selectedGasPrice, selectedGasPriceKey } = useGasEstimationState();
-
-const estimations = computed(() => data.value);
-
-async function refetchLoop() {
-  await refetch.value();
-
-  if (estimations.value) {
-    selectedGasPrice.value = estimations.value[selectedGasPriceKey.value];
-  }
-
-  setTimeout(refetchLoop, 1500);
-}
-
-onMounted(async () => {
-  refetchLoop();
-});
 
 const items = [
   {
-    name: 'Standard',
-    key: 'standardPriceGwei',
+    name: 'Slow',
+    key: 0,
     estimatedTime: '30-60 secs',
     color: 'text-green-500'
   },
   {
-    name: 'Fast',
-    key: 'fastPriceGwei',
+    name: 'Standard',
+    key: 1,
     estimatedTime: '10-30 secs',
     color: 'text-blue-500'
   },
   {
-    name: 'Rapid',
-    key: 'rapidPriceGwei',
+    name: 'Fast',
+    key: 2,
     estimatedTime: '5-10 secs',
     color: 'text-red-500'
   }
@@ -69,7 +52,7 @@ const items = [
       @click="
         () => {
           selectedGasPriceKey = item.key;
-          selectedGasPrice = estimations ? estimations[item.key] : null;
+          selectedGasPrice = speeds ? speeds[item.key].gasPrice : null;
         }
       "
     >
@@ -83,12 +66,12 @@ const items = [
       </div>
 
       <BalLoadingBlock
-        v-if="!estimations"
+        v-if="gasEstimatesDataLoading"
         class="h-6 my-1"
         :white="selectedGasPriceKey !== item.key"
       />
       <div v-else :class="['text-center text-xl my-1 font-medium', item.color]">
-        {{ estimations[item.key] }} Gwei
+        {{ speeds[item.key].gasPrice }} Gwei
       </div>
       <div
         :class="[

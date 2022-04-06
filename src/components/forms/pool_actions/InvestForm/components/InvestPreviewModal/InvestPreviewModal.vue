@@ -155,9 +155,9 @@ function handleClose(): void {
 
     <InvestZapActions :pool="pool" />
 
-    <!-- <div class="pt-4">
+    <div class="pt-4">
       <GasEstimationSelector />
-    </div> -->
+    </div>
 
     <template v-slot:footer>
       <InvestActions

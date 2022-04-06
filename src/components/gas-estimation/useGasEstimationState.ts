@@ -1,7 +1,7 @@
 import { reactive, toRefs } from 'vue';
 
 type GasEstimationState = {
-  selectedGasPriceKey: string;
+  selectedGasPriceKey: number;
   selectedGasPrice: number | null;
 };
 
@@ -9,7 +9,7 @@ type GasEstimationState = {
  * STATE
  */
 const state = reactive<GasEstimationState>({
-  selectedGasPriceKey: 'fastPriceGwei',
+  selectedGasPriceKey: 1,
   selectedGasPrice: null
 });
 

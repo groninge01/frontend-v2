@@ -134,6 +134,9 @@ const QUERY_KEYS = {
   },
   FBeets: {
     all: ['FBeets', 'all']
+  },
+  GasEstimates: {
+    all: ['GasEstimates', 'all']
   }
 };
 

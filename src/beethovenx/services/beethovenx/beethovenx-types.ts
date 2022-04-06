@@ -631,3 +631,31 @@ export interface GqlBalancerPoolStablePhantomPoolData {
   tokens: Array<GqlBalancerPoolToken>;
   totalSupply: Scalars['String'];
 }
+
+export interface GqlBalancerPoolStablePhantomPoolData {
+  __typename?: 'GqlBalancerPoolStablePhantomPoolData';
+  address: Scalars['String'];
+  balance: Scalars['String'];
+  id: Scalars['ID'];
+  symbol: Scalars['String'];
+  tokens: Array<GqlBalancerPoolToken>;
+  totalSupply: Scalars['String'];
+}
+
+export interface GqlSpeed {
+  __typename?: 'GqlSpeed';
+  acceptance: Scalars['Float'];
+  estimatedFee: Scalars['Float'];
+  gasPrice: Scalars['Float'];
+}
+
+export interface GqlGasEstimatesData {
+  __typename?: 'GqlGasEstimatesData';
+  avgGas: Scalars['Float'];
+  avgTime: Scalars['Float'];
+  avgTx: Scalars['Float'];
+  baseFee?: Scalars['Int'];
+  lastBlock: Scalars['Int'];
+  speeds: Array<GqlSpeed>;
+  timestamp: Scalars['String'];
+}

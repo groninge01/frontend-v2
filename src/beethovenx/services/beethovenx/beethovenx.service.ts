@@ -13,6 +13,7 @@ import {
   GqlBeetsUserPendingAllFarmRewards,
   GqlBeetsUserPendingRewards,
   GqlBeetsUserPoolData,
+  GqlGasEstimatesData,
   GqlHistoricalTokenPrice,
   GqlLge,
   GqlLgeCreateInput,
@@ -874,6 +875,29 @@ export default class BeethovenxService {
     }>(query, userAddress);
 
     return beetsGetUserPendingRewards;
+  }
+
+  public async getGasEstimates(): Promise<GqlGasEstimatesData> {
+    const query = jsonToGraphQLQuery({
+      query: {
+        gasEstimates: {
+          avgGas: true,
+          avgTime: true,
+          avgTx: true,
+          baseFee: true,
+          lastBlock: true,
+          speeds: {
+            acceptance: true,
+            estimatedFee: true,
+            gasPrice: true
+          }
+        }
+      }
+    });
+
+    const data = await this.get<GqlGasEstimatesData>(query);
+
+    return data;
   }
 
   public async sorGetSwaps(input: GqlSorGetSwapsInput): Promise<SwapInfo> {
