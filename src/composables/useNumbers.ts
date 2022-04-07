@@ -15,9 +15,11 @@ enum PresetFormats {
   usd = '$0,0.00',
   usd_lg = '$0,0',
   usd_m = '$0,0.00a',
+  usd_s = '$0.0000',
   percent = '0.00%',
   percent_variable = '0.[0000]%',
-  percent_lg = '0%'
+  percent_lg = '0%',
+  two_decimals = '0.00'
 }
 
 export type Preset = keyof typeof PresetFormats;

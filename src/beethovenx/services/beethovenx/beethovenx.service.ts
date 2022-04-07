@@ -895,9 +895,11 @@ export default class BeethovenxService {
       }
     });
 
-    const data = await this.get<GqlGasEstimatesData>(query);
+    const { gasEstimates } = await this.get<{
+      gasEstimates: GqlGasEstimatesData;
+    }>(query);
 
-    return data;
+    return gasEstimates;
   }
 
   public async sorGetSwaps(input: GqlSorGetSwapsInput): Promise<SwapInfo> {

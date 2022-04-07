@@ -14,7 +14,7 @@ export default function useGasEstimatesQuery() {
 
   const queryOptions = reactive({
     enabled: true,
-    refetch: 5000
+    refetchInterval: 5000
   });
 
   return useQuery<GqlGasEstimatesData>(queryKey, queryFn, queryOptions);
