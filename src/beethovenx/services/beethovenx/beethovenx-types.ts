@@ -632,16 +632,6 @@ export interface GqlBalancerPoolStablePhantomPoolData {
   totalSupply: Scalars['String'];
 }
 
-export interface GqlBalancerPoolStablePhantomPoolData {
-  __typename?: 'GqlBalancerPoolStablePhantomPoolData';
-  address: Scalars['String'];
-  balance: Scalars['String'];
-  id: Scalars['ID'];
-  symbol: Scalars['String'];
-  tokens: Array<GqlBalancerPoolToken>;
-  totalSupply: Scalars['String'];
-}
-
 export interface GqlSpeed {
   __typename?: 'GqlSpeed';
   acceptance: Scalars['Float'];
