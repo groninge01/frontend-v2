@@ -131,7 +131,7 @@ export default defineComponent({
 
       const pendingRewardTokenValue = sumBy(rewardTokens, token => token.value);
 
-      const averageApr = userPoolsData.value.averageApr;
+      const averageApr = userPoolsData.value.averageFarmApr;
 
       return {
         numFarms: farms.filter(farm => farm.stake > 0).length,
