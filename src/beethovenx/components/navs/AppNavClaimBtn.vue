@@ -89,6 +89,7 @@ import usePools from '@/composables/pools/usePools';
 import useEthers from '@/composables/useEthers';
 import useBreakpoints from '@/composables/useBreakpoints';
 import { Alert } from '@/composables/useAlerts';
+import useUserPoolsData from '@/beethovenx/composables/useUserPoolsData';
 
 export default defineComponent({
   name: 'AppNavClaimBtn',
@@ -107,6 +108,7 @@ export default defineComponent({
       harvestAllFarms,
       refetchFarmsForUser
     } = usePools();
+    const { userPoolsData } = useUserPoolsData();
     const harvesting = ref(false);
     const { upToLargeBreakpoint } = useBreakpoints();
 
@@ -129,9 +131,7 @@ export default defineComponent({
 
       const pendingRewardTokenValue = sumBy(rewardTokens, token => token.value);
 
-      const averageApr =
-        sumBy(farms, farm => farm.apr * (farm.stake || 0)) /
-        sumBy(farms, farm => farm.stake || 0);
+      const averageApr = userPoolsData.value.averageApr;
 
       return {
         numFarms: farms.filter(farm => farm.stake > 0).length,
@@ -141,7 +141,7 @@ export default defineComponent({
         ),
         pendingRewardValue: fNum(pendingRewardTokenValue, 'usd'),
         apr: fNum(averageApr, 'percent'),
-        dailyApr: fNum(averageApr / 365, 'percent'),
+        dailyApr: fNum(parseFloat(averageApr) / 365, 'percent'),
         rewardTokens
       };
     });
