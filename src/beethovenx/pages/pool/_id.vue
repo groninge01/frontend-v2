@@ -12,7 +12,7 @@
                 v-if="pool.isNewPool"
                 color="red"
                 size="sm"
-                class="uppercase mt-2 mr-2"
+                class="uppercase ml-1"
                 :outline="false"
               >
                 {{ $t('new') }}
