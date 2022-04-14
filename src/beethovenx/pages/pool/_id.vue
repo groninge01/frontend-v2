@@ -4,36 +4,38 @@
       <div class="col-span-2">
         <BalLoadingBlock v-if="loadingPool" class="h-16" />
         <div v-else class="px-4 lg:px-0 flex flex-col">
-          <div class="flex flex-wrap items-center -mt-2">
+          <div class="flex flex-col items-start -mt-2">
             <h3 class="pool-title">
-              {{ pool.name }}
-            </h3>
-            <div
-              v-for="([address, tokenMeta], i) in titleTokens"
-              :key="i"
-              class="mt-2 mr-2 flex items-center px-2 h-10 bg-gray-50 dark:bg-gray-850 rounded-lg"
-            >
-              <BalAsset :address="address" />
-              <span class="ml-2">
-                {{ tokenMeta.symbol }}
-              </span>
-              <span
-                v-if="!isStableLikePool"
-                class="font-medium text-gray-400 text-xs mt-px ml-1"
+              {{ pool.name }}&nbsp;
+              <LiquidityAPRTooltip :pool="pool" class="-ml-1 mt-1" />
+              <BalChip
+                v-if="pool.isNewPool"
+                color="red"
+                size="sm"
+                class="uppercase mt-2 mr-2"
+                :outline="false"
               >
-                {{ fNum(tokenMeta.weight, 'percent_lg') }}
-              </span>
+                {{ $t('new') }}
+              </BalChip>
+            </h3>
+            <div class="flex flex-wrap">
+              <div
+                v-for="([address, tokenMeta], i) in titleTokens"
+                :key="i"
+                class="mt-2 mr-2 flex items-center px-2 h-10 bg-gray-50 dark:bg-gray-850 rounded-lg"
+              >
+                <BalAsset :address="address" />
+                <span class="ml-2">
+                  {{ tokenMeta.symbol }}
+                </span>
+                <span
+                  v-if="!isStableLikePool"
+                  class="font-medium text-gray-400 text-xs mt-px ml-1"
+                >
+                  {{ fNum(tokenMeta.weight, 'percent_lg') }}
+                </span>
+              </div>
             </div>
-            <BalChip
-              v-if="pool.isNewPool"
-              color="red"
-              size="sm"
-              class="uppercase mt-2 mr-2"
-              :outline="false"
-            >
-              {{ $t('new') }}
-            </BalChip>
-            <LiquidityAPRTooltip :pool="pool" class="-ml-1 mt-1" />
           </div>
           <div class="flex items-center mt-2">
             <div v-html="poolFeeLabel" class="text-sm" />
