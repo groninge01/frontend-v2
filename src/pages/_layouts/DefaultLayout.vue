@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AppNav from '@/beethovenx/components/navs/AppNav.vue';
+import AppNav from '@/components/navs/AppNav/AppNav.vue';
 import AppFooterNav from '@/components/navs/AppFooterNav/AppFooterNav.vue';
 import useBreakpoints from '@/composables/useBreakpoints';
 import AppHeaderBg from '@/beethovenx/components/backgrounds/AppHeaderBg.vue';
