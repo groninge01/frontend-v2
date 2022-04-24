@@ -24,7 +24,7 @@
 <script>
 import { computed, defineComponent, onMounted, onUnmounted, ref } from 'vue';
 import useBreakpoints from '@/composables/useBreakpoints';
-import AppIcon from '@/beethovenx/components/images/AppIcon.vue';
+import AppIcon from '@/components/images/AppIcon.vue';
 import AppNavAlert from '@/components/navs/AppNav/AppNavAlert';
 import AppNavToggle from '@/beethovenx/components/navs/AppNavToggle.vue';
 import AppNavOtherItems from '@/beethovenx/components/navs/AppNavOtherItems.vue';
