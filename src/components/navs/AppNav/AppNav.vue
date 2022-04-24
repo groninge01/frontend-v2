@@ -46,7 +46,7 @@ export default defineComponent({
 
   setup() {
     // COMPOSABLES
-    const { bp, upToMediumBreakpoint } = useBreakpoints();
+    const { upToMediumBreakpoint } = useBreakpoints();
     const { trackGoal, Goals } = useFathom();
     const { connector } = useWeb3();
     const { currentAlert } = useAlerts();
@@ -79,7 +79,6 @@ export default defineComponent({
       // data
       appNav,
       // computed
-      bp,
       upToMediumBreakpoint,
       currentAlert,
       hideNetworkSelect,

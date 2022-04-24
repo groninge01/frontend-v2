@@ -73,39 +73,6 @@
         </div>
       </div>
     </div>
-    <div class="hidden px-4">
-      <span v-text="$t('language')" class="font-medium mb-2" />
-      <div class="flex mt-1">
-        <div
-          v-for="(locale, localeKey) in locales"
-          :key="localeKey"
-          class="option w-16 mr-2 py-1 text-center border rounded-xl cursor-pointer"
-          :class="{ active: appLocale === localeKey }"
-          @click="setLocale(localeKey)"
-        >
-          {{ locale }}
-        </div>
-      </div>
-    </div>
-    <div class="hidden px-4 mt-4">
-      <span v-text="$t('theme')" class="font-medium mb-2" />
-      <div class="flex mt-1">
-        <div
-          class="option w-16 mr-2 py-1.5 flex items-center justify-center border rounded-xl cursor-pointer"
-          :class="{ active: !appDarkMode }"
-          @click="setDarkMode(false)"
-        >
-          <BalIcon name="sun" size="sm" />
-        </div>
-        <div
-          class="option w-16 mr-2 py-1.5 flex items-center justify-center border rounded-xl cursor-pointer"
-          :class="{ active: appDarkMode }"
-          @click="setDarkMode(true)"
-        >
-          <BalIcon name="moon" size="sm" />
-        </div>
-      </div>
-    </div>
     <div class="px-4 mt-4">
       <div class="flex items-baseline">
         <span v-text="$t('slippageTolerance')" class="font-medium mb-2" />
@@ -175,7 +142,9 @@
     >
       <div v-text="$t('network')" />
       <div class="flex items-baseline">
-        <div :class="['w-2 h-2 mr-1 rounded-full', networkColorClass]"></div>
+        <div
+          class="w-2 h-2 mr-1 rounded-full bg-green-500 dark:bg-green-400"
+        ></div>
         {{ isUnsupportedNetwork ? $t('unsupportedNetwork') : networkName }}
       </div>
     </div>
@@ -202,23 +171,7 @@ import {
 import { TradeInterface } from '@/store/modules/app';
 import useEthereumTxType from '@/composables/useEthereumTxType';
 import { ENABLE_LEGACY_TRADE_INTERFACE } from '@/composables/trade/constants';
-import { Network } from '@/composables/useNetwork';
 import useNftQuery from '@/beethovenx/composables/nft/useNftQuery';
-
-const locales = {
-  'en-US': 'English',
-  'zh-CN': '中文',
-  'es-ES': 'Español',
-  'it-IT': 'Italiano',
-  'fr-FR': 'Français',
-  'pt-PT': 'Português',
-  'ru-RU': 'Россия',
-  'ko-KO': '한국어',
-  'ja-JP': '日本語',
-  'tr-TR': 'Türk',
-  'hi-IN': 'हिंदी',
-  'ar-AE': 'عربى'
-};
 
 export default defineComponent({
   components: {
@@ -250,45 +203,17 @@ export default defineComponent({
 
     // DATA
     const data = reactive({
-      locales,
       tradeLiquidityOptions,
       tradeInterfaceOptions,
       copiedAddress: false
     });
 
     // COMPUTED
-    const networkColorClass = computed(() => {
-      let color = 'green';
-
-      if (isUnsupportedNetwork.value) {
-        color = 'red';
-      } else {
-        switch (userNetworkConfig.value?.chainId) {
-          case Network.KOVAN:
-            color = 'purple';
-            break;
-          case Network.ROPSTEN:
-            color = 'pink';
-            break;
-          case Network.RINKEBY:
-            color = 'yellow';
-            break;
-          case Network.GÖRLI:
-            color = 'blue';
-            break;
-        }
-      }
-
-      return `bg-${color}-500 dark:bg-${color}-400`;
-    });
     const networkName = computed(() => userNetworkConfig.value?.name);
-    const appLocale = computed(() => store.state.app.locale);
-    const appDarkMode = computed(() => store.state.app.darkMode);
     const appTradeLiquidity = computed(() => store.state.app.tradeLiquidity);
     const appTradeInterface = computed(() => store.state.app.tradeInterface);
     const hideLiquidity = computed(() => !isV1Supported);
     const connectorName = computed(() => getConnectorName(connector.value?.id));
-
     const connectorLogo = computed(() => getConnectorLogo(connector.value?.id));
     const hideDisconnect = computed(() => connector.value?.id == 'gnosis');
     const isGnosisSupportedNetwork = computed(() =>
@@ -296,9 +221,6 @@ export default defineComponent({
     );
 
     // METHODS
-    const setDarkMode = val => store.commit('app/setDarkMode', val);
-    const setLocale = locale => store.commit('app/setLocale', locale);
-
     const setTradeLiquidity = tradeLiquidity =>
       store.commit('app/setTradeLiquidity', tradeLiquidity);
     const setTradeInterface = tradeInterface =>
@@ -324,9 +246,6 @@ export default defineComponent({
       appTradeLiquidity,
       appTradeInterface,
       networkName,
-      networkColorClass,
-      appLocale,
-      appDarkMode,
       connectorName,
       connectorLogo,
       hideLiquidity,
@@ -336,8 +255,6 @@ export default defineComponent({
       isUnsupportedNetwork,
       // methods
       disconnectWallet,
-      setDarkMode,
-      setLocale,
       setTradeLiquidity,
       setTradeInterface,
       copyAddress,
