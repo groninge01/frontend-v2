@@ -1,35 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
-import AppNav from '@/beethovenx/components/navs/AppNav.vue';
+import AppNav from '@/components/navs/AppNav/AppNav.vue';
 import AppFooterNav from '@/components/navs/AppFooterNav/AppFooterNav.vue';
 import useBreakpoints from '@/composables/useBreakpoints';
 import AppHeaderBg from '@/beethovenx/components/backgrounds/AppHeaderBg.vue';
-import AppHero from '@/beethovenx/components/heroes/AppHero.vue';
-import GlobalStats from '@/beethovenx/components/stats/GlobalStats.vue';
 import { EXTERNAL_LINKS } from '@/constants/links';
 
 /**
  * COMPOSABLES
  */
-const route = useRoute();
 const { upToMediumBreakpoint } = useBreakpoints();
-
-/**
- * COMPUTED
- */
-const isFarmsPage = computed(() => route.path === '/farm');
-const isPortfolioPage = computed(() => route.path === '/my-portfolio');
-const isInvestPage = computed(() => {
-  return route.path === '/pools';
-});
-const isTradePage = computed(() => {
-  return route.path === '/trade';
-});
-const showGlobalStats = computed(() => {
-  return isInvestPage.value || isFarmsPage.value || isTradePage.value;
-});
-const isHomePage = computed(() => route.path === '/');
 </script>
 
 <template>

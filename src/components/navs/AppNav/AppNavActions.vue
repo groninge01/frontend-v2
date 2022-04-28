@@ -24,19 +24,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
-
-import { EXTERNAL_LINKS } from '@/constants/links';
-
-import useFathom from '@/composables/useFathom';
+import { defineComponent } from 'vue';
 import useBreakpoints from '@/composables/useBreakpoints';
-import useNumbers from '@/composables/useNumbers';
-
 import useWeb3 from '@/services/web3/useWeb3';
-import AppNavActivityBtn from '@/components/navs/AppNav/AppNavActivityBtn/AppNavActivityBtn.vue';
-import AppNavAccountBtn from '@/components/navs/AppNav/AppNavAccountBtn.vue';
-import AppNavClaimBtn from '@/beethovenx/components/navs/AppNavClaimBtn.vue';
-import AppNavBeets from '@/beethovenx/components/navs/AppNavBeets.vue';
+import AppNavActivityBtn from './AppNavActivityBtn/AppNavActivityBtn.vue';
+import AppNavAccountBtn from './AppNavAccountBtn.vue';
+import AppNavClaimBtn from './AppNavClaimBtn.vue';
+import AppNavBeets from './AppNavBeets.vue';
 
 export default defineComponent({
   name: 'AppNavActions',
@@ -50,43 +44,16 @@ export default defineComponent({
 
   setup() {
     // COMPOSABLES
-    const { upToSmallBreakpoint, upToLargeBreakpoint } = useBreakpoints();
-    const { fNum } = useNumbers();
-    const { trackGoal, Goals } = useFathom();
-    const {
-      connectWallet,
-      account,
-      toggleWalletSelectModal,
-      isMainnet,
-      isKovan,
-      isPolygon,
-      isArbitrum
-    } = useWeb3();
-
-    // COMPUTED
-    const liquidityMiningSupported = computed(
-      () =>
-        isMainnet.value || isPolygon.value || isArbitrum.value || isKovan.value
-    );
-
-    // METHODS
-    function onClickConnect() {
-      trackGoal(Goals.ClickNavConnectWallet);
-    }
+    const { upToLargeBreakpoint } = useBreakpoints();
+    const { connectWallet, account, toggleWalletSelectModal } = useWeb3();
 
     return {
       // computed
-      liquidityMiningSupported,
       account,
-      upToSmallBreakpoint,
       upToLargeBreakpoint,
       // methods
-      fNum,
-      onClickConnect,
       connectWallet,
-      toggleWalletSelectModal,
-      // constants
-      EXTERNAL_LINKS
+      toggleWalletSelectModal
     };
   }
 });

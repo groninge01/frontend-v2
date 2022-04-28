@@ -24,15 +24,15 @@
 <script>
 import { computed, defineComponent, onMounted, onUnmounted, ref } from 'vue';
 import useBreakpoints from '@/composables/useBreakpoints';
-import AppIcon from '@/beethovenx/components/images/AppIcon.vue';
-import AppNavAlert from '@/components/navs/AppNav/AppNavAlert';
-import AppNavToggle from '@/beethovenx/components/navs/AppNavToggle.vue';
-import AppNavOtherItems from '@/beethovenx/components/navs/AppNavOtherItems.vue';
-import AppNavActions from '@/beethovenx/components/navs/AppNavActions.vue';
+import AppIcon from '@/components/images/AppIcon.vue';
+import AppNavAlert from './AppNavAlert';
+import AppNavToggle from './AppNavToggle.vue';
+import AppNavOtherItems from './AppNavOtherItems.vue';
+import AppNavActions from './AppNavActions.vue';
 import useFathom from '@/composables/useFathom';
 import useWeb3 from '@/services/web3/useWeb3';
 import useAlerts from '@/composables/useAlerts';
-import AppNavBelow from '@/beethovenx/components/navs/AppNavBelow';
+import AppNavBelow from './AppNavBelow';
 
 export default defineComponent({
   components: {
@@ -46,7 +46,7 @@ export default defineComponent({
 
   setup() {
     // COMPOSABLES
-    const { bp, upToMediumBreakpoint } = useBreakpoints();
+    const { upToMediumBreakpoint } = useBreakpoints();
     const { trackGoal, Goals } = useFathom();
     const { connector } = useWeb3();
     const { currentAlert } = useAlerts();
@@ -79,7 +79,6 @@ export default defineComponent({
       // data
       appNav,
       // computed
-      bp,
       upToMediumBreakpoint,
       currentAlert,
       hideNetworkSelect,
