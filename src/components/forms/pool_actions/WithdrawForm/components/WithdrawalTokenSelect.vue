@@ -54,6 +54,13 @@ const options = computed(() => {
     return ['all'];
   }
 
+  if (
+    props.pool.id ===
+    '0xdfc65c1f15ad3507754ef0fd4ba67060c108db7e000000000000000000000406'
+  ) {
+    return ['all', '0xDE12c7959E1a72bbe8a5f7A1dc8f8EeF9Ab011B3'];
+  }
+
   return ['all', ...tokenAddresses.value];
 });
 

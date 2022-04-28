@@ -14,9 +14,8 @@
         color="white"
         :size="upToLargeBreakpoint ? 'md' : 'sm'"
         @click="toggleWalletSelectModal"
-        class="mr-2"
       >
-        <WalletIcon class="mr-2" />
+        <WalletIcon />
         <span class="hidden lg:inline-block" v-text="$t('connectWallet')" />
         <span class="lg:hidden" v-text="$t('connect')" />
       </BalBtn>
@@ -25,13 +24,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, computed } from 'vue';
+
+import { EXTERNAL_LINKS } from '@/constants/links';
+
+import useFathom from '@/composables/useFathom';
 import useBreakpoints from '@/composables/useBreakpoints';
+import useNumbers from '@/composables/useNumbers';
+
 import useWeb3 from '@/services/web3/useWeb3';
-import AppNavActivityBtn from './AppNavActivityBtn/AppNavActivityBtn.vue';
-import AppNavAccountBtn from './AppNavAccountBtn.vue';
-import AppNavClaimBtn from './AppNavClaimBtn.vue';
-import AppNavBeets from './AppNavBeets.vue';
+import AppNavActivityBtn from '@/components/navs/AppNav/AppNavActivityBtn/AppNavActivityBtn.vue';
+import AppNavAccountBtn from '@/components/navs/AppNav/AppNavAccountBtn.vue';
+import AppNavClaimBtn from '@/beethovenx/components/navs/AppNavClaimBtn.vue';
+import AppNavBeets from '@/beethovenx/components/navs/AppNavBeets.vue';
 
 export default defineComponent({
   name: 'AppNavActions',
@@ -45,16 +50,43 @@ export default defineComponent({
 
   setup() {
     // COMPOSABLES
-    const { upToLargeBreakpoint } = useBreakpoints();
-    const { connectWallet, account, toggleWalletSelectModal } = useWeb3();
+    const { upToSmallBreakpoint, upToLargeBreakpoint } = useBreakpoints();
+    const { fNum } = useNumbers();
+    const { trackGoal, Goals } = useFathom();
+    const {
+      connectWallet,
+      account,
+      toggleWalletSelectModal,
+      isMainnet,
+      isKovan,
+      isPolygon,
+      isArbitrum
+    } = useWeb3();
+
+    // COMPUTED
+    const liquidityMiningSupported = computed(
+      () =>
+        isMainnet.value || isPolygon.value || isArbitrum.value || isKovan.value
+    );
+
+    // METHODS
+    function onClickConnect() {
+      trackGoal(Goals.ClickNavConnectWallet);
+    }
 
     return {
       // computed
+      liquidityMiningSupported,
       account,
+      upToSmallBreakpoint,
       upToLargeBreakpoint,
       // methods
+      fNum,
+      onClickConnect,
       connectWallet,
-      toggleWalletSelectModal
+      toggleWalletSelectModal,
+      // constants
+      EXTERNAL_LINKS
     };
   }
 });

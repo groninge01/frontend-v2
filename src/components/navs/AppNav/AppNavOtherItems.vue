@@ -1,9 +1,13 @@
 <template>
-  <BalPopover align="left">
+  <BalPopover
+    :verticalAlign="verticalAlign"
+    align="left"
+    closeOnClickInside="true"
+  >
     <template v-slot:activator>
       <div
         class="flex items-center px-4 cursor-pointer relative"
-        style="top: -10px"
+        :style="isVerticalAlign"
       >
         <div class="text-4xl">...</div>
       </div>
@@ -27,19 +31,24 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { computed, defineComponent, PropType } from 'vue';
 import { Alert } from '@/composables/useAlerts';
 import { EXTERNAL_LINKS } from '@/constants/links';
 
 export default defineComponent({
   name: 'AppNavOtherItems',
-
   props: {
-    alert: { type: Object as PropType<Alert>, required: true }
+    alert: { type: Object as PropType<Alert>, required: true },
+    verticalAlign: { type: String, default: 'top' }
   },
 
-  setup() {
+  setup(props) {
+    const isVerticalAlign = computed(() =>
+      props.verticalAlign === 'top' ? { top: '-10px' } : { top: '-6px' }
+    );
+
     return {
+      isVerticalAlign,
       // constants
       EXTERNAL_LINKS
     };
