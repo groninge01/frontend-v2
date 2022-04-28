@@ -25,14 +25,14 @@
 import { computed, defineComponent, onMounted, onUnmounted, ref } from 'vue';
 import useBreakpoints from '@/composables/useBreakpoints';
 import AppIcon from '@/components/images/AppIcon.vue';
-import AppNavAlert from './AppNavAlert';
+import AppNavAlert from './AppNavAlert.vue';
 import AppNavToggle from './AppNavToggle.vue';
 import AppNavOtherItems from './AppNavOtherItems.vue';
 import AppNavActions from './AppNavActions.vue';
 import useFathom from '@/composables/useFathom';
 import useWeb3 from '@/services/web3/useWeb3';
 import useAlerts from '@/composables/useAlerts';
-import AppNavBelow from './AppNavBelow';
+import AppNavBelow from './AppNavBelow.vue';
 
 export default defineComponent({
   components: {
