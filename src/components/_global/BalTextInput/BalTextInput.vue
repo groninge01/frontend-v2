@@ -13,6 +13,7 @@ import useInputEvents from './composables/useInputEvents';
 import useInputValidation from './composables/useInputValidation';
 import { omit } from 'lodash';
 import BalTooltip from '@/components/_global/BalTooltip/BalTooltip.vue';
+import _debounce from 'lodash/debounce';
 
 /**
  * TYPES
@@ -102,6 +103,10 @@ const { onInput, onKeydown, onBlur } = useInputEvents(props, emit, validate);
 // We don't want to pass on parent level classes to the html
 // input element. So we need to remove it from the attrs object.
 const inputAttrs = computed(() => omit(attrs, 'class'));
+
+const debouncedInput = _debounce(function(event) {
+  onInput(event);
+}, 400);
 </script>
 
 <template>
@@ -148,7 +153,7 @@ const inputAttrs = computed(() => omit(attrs, 'class'));
             v-bind="inputAttrs"
             :disabled="disabled"
             @blur="onBlur"
-            @input="onInput"
+            @input="debouncedInput"
             @keydown="onKeydown"
             :class="['input', inputClasses]"
           />
