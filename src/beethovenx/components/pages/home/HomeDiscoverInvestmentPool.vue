@@ -7,6 +7,7 @@ import LiquidityAPRTooltip from '@/components/tooltips/LiquidityAPRTooltip.vue';
 import { useRouter } from 'vue-router';
 import BalLoadingBlock from '@/components/_global/BalLoadingBlock/BalLoadingBlock.vue';
 import usePoolList from '@/beethovenx/composables/usePoolList';
+import { orderedTokenAddressesFor } from '@/composables/usePool';
 import { PoolListItem } from '@/beethovenx/services/beethovenx/beethovenx-types';
 
 const { fNum } = useNumbers();
@@ -44,7 +45,7 @@ function handleRowClick(pool: PoolListItem) {
         <template v-slot:footer>
           <div>
             <BalAssetSet
-              :addresses="featuredPool.pool.tokensList"
+              :addresses="orderedTokenAddressesFor(featuredPool.pool)"
               :size="40"
               :width="150"
             />
