@@ -34,7 +34,8 @@ const QUERY_KEYS = {
     ]
   },
   Rewards: {
-    Pending: (account: Ref<string>) => ['pendingRewards', 'user', { account }]
+    Pending: (account: Ref<string>) => ['pendingRewards', 'user', { account }],
+    GetRewards: (poolId: string) => ['poolId', { poolId }]
   },
   Pools: {
     All: (tokens: Ref<string[]>, poolIds: Ref<string[]> | undefined) => [

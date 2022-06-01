@@ -1,23 +1,18 @@
-import { computed, reactive, Ref } from 'vue';
-import useWeb3 from '@/services/web3/useWeb3';
+import { Ref, computed } from 'vue';
 import { TransactionResponse, Web3Provider } from '@ethersproject/providers';
-import { sendTransaction } from '@/lib/utils/balancer/web3';
-import { default as abi } from '@/lib/abi/ERC20.json';
-import { bnum } from '@/lib/utils';
+
 import BigNumber from 'bignumber.js';
-import useTransactions from '@/composables/useTransactions';
-import { erc20ContractService } from '@/beethovenx/services/erc20/erc20-contracts.service';
-import GAUGE_CONTRACT_ABI from '@/beethovenx/abi/LiquidityGaugeV5.json';
 import { FullPool } from '@/services/balancer/subgraph/types';
-import { Multicaller } from '@/lib/utils/balancer/contract';
-import { configService } from '@/services/config/config.service';
-import useGaugeUserQuery from '@/beethovenx/composables/gauge/useGaugeUserQuery';
-import { formatUnits } from 'ethers/lib/utils';
-import { useQuery } from 'vue-query';
-import QUERY_KEYS from '@/constants/queryKeys';
-import useTokens from '@/composables/useTokens';
-import useGaugeUserBalanceQuery from '@/beethovenx/composables/gauge/useGaugeUserBalanceQuery';
+import GAUGE_CONTRACT_ABI from '@/beethovenx/abi/LiquidityGaugeV5.json';
+import { default as abi } from '@/lib/abi/ERC20.json';
+import { erc20ContractService } from '@/beethovenx/services/erc20/erc20-contracts.service';
+import { sendTransaction } from '@/lib/utils/balancer/web3';
 import useEthers from '@/composables/useEthers';
+import useGaugePendingRewardsQuery from './useGaugePendingRewardsQuery';
+import useGaugeUserBalanceQuery from '@/beethovenx/composables/gauge/useGaugeUserBalanceQuery';
+import useGaugeUserQuery from '@/beethovenx/composables/gauge/useGaugeUserQuery';
+import useTransactions from '@/composables/useTransactions';
+import useWeb3 from '@/services/web3/useWeb3';
 
 export async function approveToken(
   web3: Web3Provider,
@@ -29,28 +24,24 @@ export async function approveToken(
 }
 
 export default function useGauge(pool: Ref<FullPool>) {
-  const { getProvider, appNetworkConfig, account } = useWeb3();
+  const { getProvider, appNetworkConfig } = useWeb3();
   const { addTransaction } = useTransactions();
+  const { txListener } = useEthers();
+
   const gaugeUserQuery = useGaugeUserQuery(pool.value.id);
   const { data: gaugeUserBalance } = useGaugeUserBalanceQuery(
     pool.value.gauge?.address || null
   );
 
-  const { priceFor } = useTokens();
-  const { txListener } = useEthers();
+  const gaugePendingRewardQuery = useGaugePendingRewardsQuery(pool.value);
 
-  const {
-    isLoading: isPendingRewardsLoading,
-    data: pendingRewards,
-    refetch
-  } = useQuery(
-    QUERY_KEYS.Rewards.GetRewards(pool.value.id),
-    getPendingRewards,
-    reactive({
-      enabled: true,
-      refetchInterval: 5000
-    })
-  );
+  const pendingRewards = computed(() => {
+    return gaugePendingRewardQuery.data.value;
+  });
+
+  const isPendingRewardsLoading = computed(() => {
+    return gaugePendingRewardQuery.isLoading.value;
+  });
 
   async function approve() {
     try {
@@ -126,7 +117,7 @@ export default function useGauge(pool: Ref<FullPool>) {
 
       txListener(tx, {
         onTxConfirmed: async () => {
-          await refetch.value();
+          await gaugePendingRewardQuery.refetch.value();
         },
         onTxFailed: () => {
           //
@@ -185,46 +176,6 @@ export default function useGauge(pool: Ref<FullPool>) {
   const gaugeUser = computed(() => {
     return gaugeUserQuery.data.value;
   });
-
-  async function getPendingRewards() {
-    const provider = getProvider();
-    const multicaller = new Multicaller(
-      configService.network.key,
-      provider,
-      GAUGE_CONTRACT_ABI
-    );
-
-    pool.value.gauge.rewardTokens.map(rewardToken => {
-      multicaller.call(
-        `${pool.value.gauge.address}.claimableRewards.${rewardToken.address}`,
-        pool.value.gauge.address,
-        'claimable_reward_write',
-        [account.value, rewardToken.address]
-      );
-    });
-
-    const gaugesDataMap = await multicaller.execute();
-
-    let balanceUSD = 0;
-    const rewards = pool.value.gauge.rewardTokens.map(rewardToken => {
-      const balance =
-        gaugesDataMap[pool.value.gauge.address].claimableRewards[
-          rewardToken.address
-        ];
-      balanceUSD += bnum(balance)
-        .times(priceFor(rewardToken.address))
-        .toNumber();
-
-      //      console.log(rewardToken.address, priceFor(rewardToken.address));
-
-      return {
-        symbol: rewardToken.symbol,
-        balance: formatUnits(balance, rewardToken.decimals)
-      };
-    });
-    //    console.log(balanceUSD); //TODO, need to add reward tokens to test this
-    return { rewards: rewards, balanceUSD: balanceUSD };
-  }
 
   return {
     approve,
