@@ -11,6 +11,7 @@
         :size="upToLargeBreakpoint ? 'md' : 'sm'"
         :circle="upToLargeBreakpoint"
       >
+        <!-- hide for now -->
         <!-- <img
           v-if="nftImage !== null"
           :src="nftImage"
