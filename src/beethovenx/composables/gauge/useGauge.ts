@@ -2,12 +2,14 @@ import { Ref, computed } from 'vue';
 import { TransactionResponse, Web3Provider } from '@ethersproject/providers';
 
 import BigNumber from 'bignumber.js';
+import ChildChainGaugeRewardHelper from '@/beethovenx/abi/ChildChainGaugeRewardHelper.json';
 import { FullPool } from '@/services/balancer/subgraph/types';
 import GAUGE_CONTRACT_ABI from '@/beethovenx/abi/LiquidityGaugeV5.json';
 import { default as abi } from '@/lib/abi/ERC20.json';
 import { erc20ContractService } from '@/beethovenx/services/erc20/erc20-contracts.service';
 import { sendTransaction } from '@/lib/utils/balancer/web3';
 import useEthers from '@/composables/useEthers';
+import useGaugeBptBalanceQuery from '@/beethovenx/composables/gauge/useGaugeBptBalanceQuery';
 import useGaugePendingRewardsQuery from './useGaugePendingRewardsQuery';
 import useGaugeUserBalanceQuery from '@/beethovenx/composables/gauge/useGaugeUserBalanceQuery';
 import useGaugeUserQuery from '@/beethovenx/composables/gauge/useGaugeUserQuery';
@@ -24,16 +26,37 @@ export async function approveToken(
 }
 
 export default function useGauge(pool: Ref<FullPool>) {
-  const { getProvider, appNetworkConfig } = useWeb3();
+  const { getProvider, appNetworkConfig, account } = useWeb3();
   const { addTransaction } = useTransactions();
   const { txListener } = useEthers();
 
   const gaugeUserQuery = useGaugeUserQuery(pool.value.id);
-  const { data: gaugeUserBalance } = useGaugeUserBalanceQuery(
+  const {
+    data: gaugeUserBalance,
+    refetch: gaugeUserBalanceReftech
+  } = useGaugeUserBalanceQuery(pool.value.gauge?.address || null);
+  const {
+    data: gaugeBptBalance,
+    refetch: gaugeBptBalanceRefetch
+  } = useGaugeBptBalanceQuery(
+    pool.value.address,
     pool.value.gauge?.address || null
   );
 
   const gaugePendingRewardQuery = useGaugePendingRewardsQuery(pool.value);
+  const bptPrice = computed(() => {
+    return (
+      parseFloat(pool.value.totalLiquidity) / parseFloat(pool.value.totalShares)
+    );
+  });
+
+  const gaugeUserBalanceUsd = computed(() => {
+    return bptPrice.value * parseFloat(gaugeUserBalance.value || '0');
+  });
+
+  const gaugeBptBalanceUsd = computed(() => {
+    return bptPrice.value * parseFloat(gaugeBptBalance.value || '0');
+  });
 
   const pendingRewards = computed(() => {
     return gaugePendingRewardQuery.data.value;
@@ -81,6 +104,16 @@ export default function useGauge(pool: Ref<FullPool>) {
         details: {
           contractAddress: pool.value.address,
           spender: pool.value.gauge.address
+        }
+      });
+
+      txListener(tx, {
+        onTxConfirmed: async () => {
+          await gaugeBptBalanceRefetch.value();
+          await gaugeUserBalanceReftech.value();
+        },
+        onTxFailed: () => {
+          //
         }
       });
 
@@ -134,17 +167,16 @@ export default function useGauge(pool: Ref<FullPool>) {
     const provider = getProvider();
     return sendTransaction(
       provider,
-      pool.value.gauge.address,
-      GAUGE_CONTRACT_ABI,
-      'claim_rewards()',
-      []
+      appNetworkConfig.addresses.gaugeRewardHelper,
+      ChildChainGaugeRewardHelper,
+      'claimRewards',
+      [pool.value.gauge.address, account.value]
     );
   }
 
   async function withdrawAndHarvest(amount: BigNumber) {
     try {
       const tx = await getWithdrawTransaction(amount.toString());
-      console.log(tx);
       addTransaction({
         id: tx.hash,
         type: 'tx',
@@ -152,7 +184,17 @@ export default function useGauge(pool: Ref<FullPool>) {
         summary: 'Withdraw staked LP tokens',
         details: {
           contractAddress: pool.value.address,
-          spender: appNetworkConfig.addresses.masterChef
+          spender: pool.value.gauge.address
+        }
+      });
+
+      txListener(tx, {
+        onTxConfirmed: async () => {
+          await gaugeBptBalanceRefetch.value();
+          await gaugeUserBalanceReftech.value();
+        },
+        onTxFailed: () => {
+          //
         }
       });
 
@@ -185,6 +227,9 @@ export default function useGauge(pool: Ref<FullPool>) {
     gaugeUser,
     pendingRewards,
     isPendingRewardsLoading,
-    gaugeUserBalance
+    gaugeUserBalance,
+    gaugeUserBalanceUsd,
+    gaugeBptBalance,
+    gaugeBptBalanceUsd
   };
 }
