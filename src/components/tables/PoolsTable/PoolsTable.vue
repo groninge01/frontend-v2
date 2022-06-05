@@ -173,7 +173,7 @@ export default defineComponent({
         accessor: 'uri',
         Header: 'iconColumnHeader',
         Cell: 'iconColumnCell',
-        width: 125,
+        width: 100,
         noGrow: true
       },
       {
